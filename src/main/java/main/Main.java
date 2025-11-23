@@ -4,11 +4,81 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fileio.CommandInput;
 import fileio.InputLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+
+
+
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class SimulationParams {
+
+    private String territoryDim;
+    private int energyPoints;
+
+    public String getTerritoryDim() {
+        return territoryDim;
+    }
+
+    public void setTerritoryDim(String territoryDim) {
+        this.territoryDim = territoryDim;
+    }
+
+    public int getEnergyPoints() {
+        return energyPoints;
+    }
+    public void setEnergyPoints(int energyPoints) {
+        this.energyPoints = energyPoints;
+    }
+}
+@JsonIgnoreProperties(ignoreUnknown = true)
+class Commands {
+    private String command;
+    private int timestamp;
+
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
+    public int getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(int timestamp) {
+        this.timestamp = timestamp;
+    }
+}
+
+class InputHolder {
+    ArrayList<SimulationParams> simulationParams;
+    ArrayList<Commands> commands;
+
+    public ArrayList<SimulationParams> getSimulationParams() {
+        return simulationParams;
+    }
+
+    public void setSimulationParams(ArrayList<SimulationParams> simulationParams) {
+        this.simulationParams = simulationParams;
+    }
+
+    public ArrayList<Commands> getCommands() {
+        return commands;
+    }
+
+    public void setCommands(ArrayList<Commands> commands) {
+        this.commands = commands;
+    }
+}
 /**
  * The entry point to this homework. It runs the checker that tests your implementation.
  */
@@ -49,8 +119,27 @@ public final class Main {
          output.add(objectNode);
          *
          */
+        //inputLoader.getSimulations();
+
+        //ArrayList<CommandInput> commands = inputLoader.getCommands();
+
+
+        InputHolder inputHolder = new InputHolder();
+        inputHolder = MAPPER.readValue(new  File(inputPath), InputHolder.class);
+
+
+
+        ArrayList<SimulationParams> simulationParams = inputHolder.getSimulationParams();
+        SimulationParams sim = simulationParams.getFirst();
+
+        ArrayList<Commands> commands = inputHolder.getCommands();
+
+        for (Commands command : commands) {
+            IO.println(command.getCommand() + " timestamp : " + command.getTimestamp());
+        }
+
         ObjectNode objectNode = MAPPER.createObjectNode();
-        objectNode.put("field_name", "field_value");
+        objectNode.put(sim.getTerritoryDim(), sim.getEnergyPoints());
         ArrayNode arrayNode = MAPPER.createArrayNode();
         arrayNode.add(objectNode);
         output.add(arrayNode);
