@@ -7,7 +7,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import entities.air.*;
 import entities.animal.Animals;
 import entities.plant.Plants;
-import entities.soil.*;
+
+import entities.soil.Soil;
 import entities.water.Water;
 import fileio.CommandInput;
 import fileio.InputLoader;
@@ -299,6 +300,21 @@ class InitializeMap {
         }
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
 }
 
 
@@ -307,6 +323,30 @@ class WorldManager {
     private boolean isSimStarted = false;
     private InitializeMap map;
     private int timestamp;
+
+
+    void calculateMap(InitializeMap map) {
+        MapBox[][] mapBox = map.getEnvMap();
+        for(int i=0; i < map.getHeight(); i++) {
+            for(int j=0; j < map.getWidth(); j++) {
+                if(mapBox[i][j].getWater() != null) {
+                    Water water = mapBox[i][j].getWater();
+                    water.setWater_quality();
+                }
+
+                if(mapBox[i][j].getAir() != null) {
+                    Air air = mapBox[i][j].getAir();
+                    air.setAirQualityScore();
+                }
+
+                if(mapBox[i][j].getSoil() != null) {
+                    Soil soil = mapBox[i][j].getSoil();
+                    soil.setSoilQualityScore();
+                }
+            }
+        }
+
+    }
 
 
     public WorldManager(InitializeMap map) {
@@ -323,18 +363,42 @@ class WorldManager {
                     outputNode.put("message", "ERROR: Simulation already started. Cannot perform action");
                 } else {
                     isSimStarted = true;
+                    calculateMap(map);
                     outputNode.put("message", "Simulation has started.");
                 }
                 outputNode.put("timestamp", command.getTimestamp());
                 break;
 
             case "printEnvConditions":
+                if (!isSimStarted) {
+                    outputNode.put("message", "ERROR: Simulation not started. Cannot perform action");
+                } else {
+                    //curent position of robot ?
+                    int x=0,y=0;
+                    outputNode.set("output", PrintEnvConditions(map,x,y));
+                }
+
+                outputNode.put("timestamp", command.getTimestamp());
                 break;
 
             case "printMap":
+                if (!isSimStarted) {
+                    outputNode.put("message", "ERROR: Simulation not started. Cannot perform action");
+                } else {
+                    outputNode.set("output",printMap(map));
+                }
+
+                outputNode.put("timestamp", command.getTimestamp());
                 break;
 
             case "endSimulation":
+                if (!isSimStarted) {
+                    outputNode.put("message", "ERROR: Simulation not started. Cannot perform action");
+                } else {
+                    outputNode.put("message", "Simulation has ended.");
+                    isSimStarted = false;
+                }
+                outputNode.put("timestamp", command.getTimestamp());
                 break;
 
             case "changeWeatherConditions":
@@ -358,6 +422,104 @@ class WorldManager {
             default:
                 break;
         }
+
+        return outputNode;
+    }
+
+    ArrayNode printMap(InitializeMap map) {
+        ObjectNode outputNode = OBJECT_MAPPER.createObjectNode();
+        ArrayNode outputArray = OBJECT_MAPPER.createArrayNode();
+        MapBox[][] mapBox = map.getEnvMap();
+
+
+
+        for(int j=0; j < map.getWidth(); j++) {
+            for(int i=0; i < map.getHeight(); i++) {
+
+                int obj_num = 0;
+                if(mapBox[i][j].getWater() != null) {
+                    obj_num++;
+                }
+                if(mapBox[i][j].getAnimal() != null) {
+                    obj_num++;
+                }
+                if(mapBox[i][j].getPlant() != null) {
+                    obj_num++;
+                }
+
+                ObjectNode cellData = OBJECT_MAPPER.createObjectNode();
+                ArrayNode coords = OBJECT_MAPPER.createArrayNode();
+                coords.add(i);
+                coords.add(j);
+                cellData.set("section", coords);
+                //cellData.put("section", "[ "+i+", "+j+" ]");
+                cellData.put("totalNrOfObjects", obj_num);
+                //outputNode.put("output", cellData);
+                cellData.put("soilQuality",mapBox[i][j].getSoil().getSoilQuality());
+                cellData.put("airQuality",mapBox[i][j].getAir().getAirQuality());
+
+                outputArray.add(cellData);
+            }
+        }
+
+        //outputNode.add("output", outputArray);
+        return  outputArray;
+    }
+
+    ObjectNode PrintEnvConditions(InitializeMap  map, int x, int y) {
+        ObjectNode outputNode = OBJECT_MAPPER.createObjectNode();
+        MapBox[][] mapBox = map.getEnvMap();
+
+        ObjectNode plantData = OBJECT_MAPPER.createObjectNode();
+
+        if(mapBox[x][y].getSoil() != null) {
+            Soil soil = mapBox[x][y].getSoil();
+            //folosim valuetotree pt a nu sta sa le punem manual
+            ObjectNode soilData = OBJECT_MAPPER.valueToTree(soil);
+            soilData.remove("sections");
+            soilData.remove("soilQuality");
+            soilData.remove("soilQualityScore");
+            soilData.put("soilQuality", soil.getSoilQualityScore());
+            outputNode.set("soil", soilData);
+        }
+
+        if(mapBox[x][y].getPlant() != null) {
+            Plants plants = mapBox[x][y].getPlant();
+            plantData.put("type", plants.getType());
+            plantData.put("name", plants.getName());
+            plantData.put("mass", plants.getMass());
+            outputNode.set("plants", plantData);
+        }
+
+        if(mapBox[x][y].getAnimal() != null) {
+            Animals animal = mapBox[x][y].getAnimal();
+            //folosim valuetotree pt a nu sta sa le punem manual
+            ObjectNode animalData = OBJECT_MAPPER.valueToTree(animal);
+            animalData.remove("sections");
+            outputNode.set("animals", animalData);
+        }
+
+
+        if(mapBox[x][y].getWater() != null) {
+            Water water = mapBox[x][y].getWater();
+            ObjectNode waterData = OBJECT_MAPPER.createObjectNode();
+            waterData.put("type", water.getType());
+            waterData.put("name", water.getName());
+            waterData.put("mass", water.getMass());
+            //waterData.put("water_quality", water.getWater_quality());
+            outputNode.set("water", waterData);
+        }
+
+        if(mapBox[x][y].getAir() != null) {
+            Air air = mapBox[x][y].getAir();
+            ObjectNode airData = OBJECT_MAPPER.valueToTree(air);
+            airData.remove("airQuality");
+            airData.remove("airQualityScore");
+            airData.put("airQuality", air.getAirQualityScore());
+            airData.remove("sections");
+            outputNode.set("air", airData);
+        }
+
 
         return outputNode;
     }
@@ -443,11 +605,23 @@ public final class Main {
         //IO.println(sim.getTerritoryDim() + sim.getEnergyPoints() + sim.getTerritorySectionParams());
 
 //        ObjectNode objectNode = MAPPER.createObjectNode();
-//        objectNode.put(sim.getTerritoryDim(), sim.getEnergyPoints());
+//        objectNode.put("output", "value");
 //        ArrayNode arrayNode = MAPPER.createArrayNode();
 //        arrayNode.add(objectNode);
 //        output.add(arrayNode);
 //        output.add(objectNode);
+//
+//
+//
+//        ObjectNode plants = MAPPER.createObjectNode();
+//        //plants.set("plants", plants);
+//        plants.put("type", "Algae");
+//        plants.put("name", "EmeraldAlgae");
+//        plants.put("mass", 0.4);
+//        objectNode.set("Plants",plants);
+//
+//        arrayNode.add(plants);
+
 
         File outputFile = new File(outputPath);
         outputFile.getParentFile().mkdirs();

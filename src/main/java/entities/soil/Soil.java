@@ -8,7 +8,8 @@ import main.*;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
-        property = "type"
+        property = "type",
+        visible = true
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ForestSoil.class, name = "ForestSoil"),
@@ -22,6 +23,7 @@ public abstract class Soil extends Entities {
     private float waterRetention;
     private float soilpH;
     private float organicMatter;
+    private String soilQuality;
 
     public float getNitrogen() {
         return nitrogen;
@@ -53,6 +55,17 @@ public abstract class Soil extends Entities {
 
     public void setOrganicMatter(float organicMatter) {
         this.organicMatter = organicMatter;
+    }
+
+    public void setSoilQualityScore() {}
+
+    public double getSoilQualityScore() {return 0;}
+
+    public void setSoilQuality(String soilQuality) {
+        this.soilQuality = soilQuality;
+    }
+    public String getSoilQuality() {
+        return soilQuality;
     }
 }
 

@@ -8,7 +8,8 @@ import entities.Entities;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
-        property = "type"
+        property = "type",
+        visible = true
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = PolarAir.class, name = "PolarAir"),
@@ -21,6 +22,7 @@ public abstract class Air extends Entities {
     private float humidity;
     private float temperature;
     private float oxygenLevel;
+    private String airQuality;
 
     public float getHumidity() {
         return humidity;
@@ -45,4 +47,22 @@ public abstract class Air extends Entities {
     public void setOxygenLevel(float oxygenLevel) {
         this.oxygenLevel = oxygenLevel;
     }
+
+    public String getAirQuality() {
+        return airQuality;
+    }
+
+    public double getAirQualityScore() { return 0; }
+
+    public void setAirQuality(double airQualityScore) {
+        if(airQualityScore >= 70)
+            airQuality = "good";
+        else if (airQualityScore >= 40) {
+            airQuality = "moderate";
+        } else {
+            airQuality = "poor";
+        }
+    }
+
+    public void setAirQualityScore() {}
 }
