@@ -28,7 +28,7 @@ class TerritorySectionParams {
     private ArrayList<Animals> animals;
     private ArrayList<Water> water;
     private ArrayList<Air> air;
-
+        //test push pc buc
     public ArrayList<Soil> getSoil() {
         return soil;
     }
