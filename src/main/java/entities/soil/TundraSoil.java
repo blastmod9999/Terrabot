@@ -19,6 +19,12 @@ public class TundraSoil extends Soil {
             setSoilQuality("poor");
         }
     }
+
+    @Override
+    public double posibilityToGetStuck(){
+        return  ((50 - permafrostDepth) / 50) * 100;
+    }
+
     public float getPermafrostDepth() {
         return permafrostDepth;
     }

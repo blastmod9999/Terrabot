@@ -26,4 +26,9 @@ public class DesertSoil extends Soil {
     public void setSalinity(float salinity) {
         this.salinity = salinity;
     }
+
+    @Override
+    public double posibilityToGetStuck(){
+        return ((100 - getWaterRetention() + salinity) / 100) * 100;
+    }
 }

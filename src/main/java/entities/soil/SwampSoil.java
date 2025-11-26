@@ -25,6 +25,11 @@ public class SwampSoil extends Soil {
 //    }
 
     @Override
+    public double posibilityToGetStuck(){
+        return 	waterLogging * 10;
+    }
+
+    @Override
     public double getSoilQualityScore()
     {
         return soilQualityScore;

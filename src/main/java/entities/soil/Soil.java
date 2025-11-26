@@ -67,6 +67,10 @@ public abstract class Soil extends Entities {
     public String getSoilQuality() {
         return soilQuality;
     }
+
+    public double posibilityToGetStuck() {
+        return 0;
+    }
 }
 
 

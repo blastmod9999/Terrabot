@@ -25,6 +25,11 @@ public class ForestSoil extends Soil {
 //    }
 
     @Override
+    public double posibilityToGetStuck(){
+        return ((getWaterRetention() * 0.6 + leafLitter * 0.4) / 80) * 100;
+    }
+
+    @Override
     public double getSoilQualityScore()
     {
         return soilQualityScore;

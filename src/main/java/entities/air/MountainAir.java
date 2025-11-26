@@ -11,6 +11,9 @@ public class MountainAir extends Air {
         double oxygenFactor = getOxygenLevel() - ((altitude / 1000.0) * 0.5);
         airQualityScore = (oxygenFactor * 2) + (getHumidity() * 0.6);
         setAirQuality(airQualityScore);
+
+        setAirToxicity(airQualityScore,78);
+
     }
     @Override
     public double getAirQualityScore() {

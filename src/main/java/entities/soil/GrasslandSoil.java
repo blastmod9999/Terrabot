@@ -19,6 +19,12 @@ public class GrasslandSoil extends Soil {
             setSoilQuality("poor");
         }
     }
+
+    @Override
+    public double posibilityToGetStuck(){
+        return (((50 - rootDensity) + getWaterRetention() * 0.5) / 75) * 100;
+    }
+
     public float getRootDensity() {
         return rootDensity;
     }

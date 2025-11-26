@@ -12,6 +12,9 @@ public class DesertAir extends Air {
         double normalizeScore = Math.max(0, Math.min(100, airQualityScore));
         airQualityScore = Math.round(normalizeScore * 100.0) / 100.0;
         setAirQuality(airQualityScore);
+
+        //toxicitate:
+        setAirToxicity(airQualityScore,65);
     }
     @Override
     public double getAirQualityScore() {

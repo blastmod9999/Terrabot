@@ -1,5 +1,6 @@
 package entities.air;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import entities.Entities;
@@ -23,6 +24,8 @@ public abstract class Air extends Entities {
     private float temperature;
     private float oxygenLevel;
     private String airQuality;
+    @JsonIgnore
+    private double airToxicity;
 
     public float getHumidity() {
         return humidity;
@@ -53,6 +56,18 @@ public abstract class Air extends Entities {
     }
 
     public double getAirQualityScore() { return 0; }
+
+    public void setAirToxicity(double airQualityScore, int maxScore) {
+        double toxicityAQ = 100 * (1 - airQualityScore / maxScore);
+        double finalResult = Math.round(toxicityAQ * 100.0) / 100.0;
+        double normalizeScore = Math.max(0, Math.min(100, finalResult));
+        finalResult = Math.round(normalizeScore * 100.0) / 100.0;
+        this.airToxicity = finalResult;
+    }
+
+    public double getAirToxicity() {
+        return airToxicity;
+    }
 
     public void setAirQuality(double airQualityScore) {
         if(airQualityScore >= 70)

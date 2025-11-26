@@ -12,6 +12,8 @@ public class TemperateAir extends Air {
         double normalizeScore = Math.max(0, Math.min(100, airQualityScore));
         airQualityScore = Math.round(normalizeScore * 100.0) / 100.0;
         setAirQuality(airQualityScore);
+
+        setAirToxicity(airQualityScore,84);
     }
     @Override
     public double getAirQualityScore() {
