@@ -1,7 +1,7 @@
 package entities.air;
 
 public class PolarAir extends Air {
-    private float iceCrystalConcentration; //polar
+    private double iceCrystalConcentration; //polar
     private double airQualityScore;
 
     @Override
@@ -19,11 +19,11 @@ public class PolarAir extends Air {
     public double getAirQualityScore() {
         return airQualityScore;
     }
-    public float getIceCrystalConcentration() {
+    public double getIceCrystalConcentration() {
         return iceCrystalConcentration;
     }
 
-    public void setIceCrystalConcentration(float iceCrystalConcentration) {
+    public void setIceCrystalConcentration(double iceCrystalConcentration) {
         this.iceCrystalConcentration = iceCrystalConcentration;
     }
 }

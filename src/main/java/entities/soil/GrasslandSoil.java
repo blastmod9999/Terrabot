@@ -1,7 +1,7 @@
 package entities.soil;
 
 public class GrasslandSoil extends Soil {
-    private float rootDensity;  //GrasslandSoil
+    private double rootDensity;  //GrasslandSoil
     private double soilQualityScore;
 
     @Override
@@ -25,7 +25,7 @@ public class GrasslandSoil extends Soil {
         return (((50 - rootDensity) + getWaterRetention() * 0.5) / 75) * 100;
     }
 
-    public float getRootDensity() {
+    public double getRootDensity() {
         return rootDensity;
     }
 

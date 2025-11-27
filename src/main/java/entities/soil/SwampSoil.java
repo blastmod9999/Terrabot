@@ -1,7 +1,7 @@
 package entities.soil;
 
 public class SwampSoil extends Soil {
-    private float waterLogging;  //SwampSoil
+    private double waterLogging;  //SwampSoil
     private double soilQualityScore;
 
     @Override
@@ -34,10 +34,10 @@ public class SwampSoil extends Soil {
     {
         return soilQualityScore;
     }
-    public float getWaterLogging() {
+    public double getWaterLogging() {
         return waterLogging;
     }
-    public void setWaterLogging(float waterLogging) {
+    public void setWaterLogging(double waterLogging) {
         this.waterLogging = waterLogging;
     }
 }

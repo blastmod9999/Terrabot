@@ -19,41 +19,41 @@ import main.*;
         @JsonSubTypes.Type(value = GrasslandSoil.class, name = "GrasslandSoil")
 })
 public abstract class Soil extends Entities {
-    private float nitrogen;
-    private float waterRetention;
-    private float soilpH;
-    private float organicMatter;
+    private double nitrogen;
+    private double waterRetention;
+    private double soilpH;
+    private double organicMatter;
     private String soilQuality;
 
-    public float getNitrogen() {
+    public double getNitrogen() {
         return nitrogen;
     }
 
-    public void setNitrogen(float nitrogen) {
+    public void setNitrogen(double nitrogen) {
         this.nitrogen = nitrogen;
     }
 
-    public float getWaterRetention() {
+    public double getWaterRetention() {
         return waterRetention;
     }
 
-    public void setWaterRetention(float waterRetention) {
+    public void setWaterRetention(double waterRetention) {
         this.waterRetention = waterRetention;
     }
 
-    public float getSoilpH() {
+    public double getSoilpH() {
         return soilpH;
     }
 
-    public void setSoilpH(float soilpH) {
+    public void setSoilpH(double soilpH) {
         this.soilpH = soilpH;
     }
 
-    public float getOrganicMatter() {
+    public double getOrganicMatter() {
         return organicMatter;
     }
 
-    public void setOrganicMatter(float organicMatter) {
+    public void setOrganicMatter(double organicMatter) {
         this.organicMatter = organicMatter;
     }
 

@@ -1,7 +1,7 @@
 package entities.air;
 
 public class TropicalAir extends Air {
-    private float co2Level; //tropical
+    private double co2Level; //tropical
     private double airQualityScore;
 
     @Override
@@ -21,11 +21,11 @@ public class TropicalAir extends Air {
     public double getAirQualityScore() {
         return airQualityScore;
     }
-    public float getCo2Level() {
+    public double getCo2Level() {
         return co2Level;
     }
 
-    public void setCo2Level(float co2Level) {
-        this.co2Level = co2Level;
+    public void setCo2Level(double co2Level) {
+        this.co2Level = Math.round(co2Level * 100.0) / 100.0;
     }
 }

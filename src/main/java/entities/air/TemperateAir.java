@@ -1,7 +1,7 @@
 package entities.air;
 
 public class TemperateAir extends Air {
-    private float pollenLevel; //temperat
+    private double pollenLevel; //temperat
     private double airQualityScore;
 
     @Override
@@ -19,11 +19,11 @@ public class TemperateAir extends Air {
     public double getAirQualityScore() {
         return airQualityScore;
     }
-    public float getPollenLevel() {
+    public double getPollenLevel() {
         return pollenLevel;
     }
 
-    public void setPollenLevel(float pollenLevel) {
+    public void setPollenLevel(double pollenLevel) {
         this.pollenLevel = pollenLevel;
     }
 }

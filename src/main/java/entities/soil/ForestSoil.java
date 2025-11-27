@@ -1,7 +1,7 @@
 package entities.soil;
 
 public class ForestSoil extends Soil {
-    private float leafLitter;  //ForestSoil
+    private double leafLitter;  //ForestSoil
     private double soilQualityScore;
 
     @Override
@@ -34,11 +34,11 @@ public class ForestSoil extends Soil {
     {
         return soilQualityScore;
     }
-    public float getLeafLitter() {
+    public double getLeafLitter() {
         return leafLitter;
     }
 
-    public void setLeafLitter(float leafLitter) {
+    public void setLeafLitter(double leafLitter) {
         this.leafLitter = leafLitter;
     }
 }

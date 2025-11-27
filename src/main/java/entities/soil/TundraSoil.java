@@ -1,7 +1,7 @@
 package entities.soil;
 
 public class TundraSoil extends Soil {
-    private float permafrostDepth; //TundraSoil
+    private double permafrostDepth; //TundraSoil
     private double soilQualityScore;
 
     @Override
@@ -25,11 +25,11 @@ public class TundraSoil extends Soil {
         return  ((50 - permafrostDepth) / 50) * 100;
     }
 
-    public float getPermafrostDepth() {
+    public double getPermafrostDepth() {
         return permafrostDepth;
     }
 
-    public void setPermafrostDepth(float permafrostDepth) {
+    public void setPermafrostDepth(double permafrostDepth) {
         this.permafrostDepth = permafrostDepth;
     }
 }

@@ -26,6 +26,30 @@ public class TerraBot {
         IO.println("Battery Charge: " + batteryCharge);
     }
 
+    public int getChargeFinTimestamp() {
+        return chargeFinTimestamp;
+    }
+
+    public void setChargeFinTimestamp(int chargeFinTimestamp) {
+        this.chargeFinTimestamp = chargeFinTimestamp;
+    }
+
+    public boolean isCharging() {
+        return isCharging;
+    }
+
+    public void setCharging(boolean charging) {
+        isCharging = charging;
+    }
+
+    public int getBatteryCharge() {
+        return batteryCharge;
+    }
+
+    public void setBatteryCharge(int batteryCharge) {
+        this.batteryCharge = batteryCharge;
+    }
+
     public String moveRobot(InitializeMap map) {
         MapBox[][] mapBox = map.getEnvMap();
         int minimal = 99999999;

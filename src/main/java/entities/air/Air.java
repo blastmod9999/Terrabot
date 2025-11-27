@@ -20,34 +20,34 @@ import entities.Entities;
         @JsonSubTypes.Type(value = DesertAir.class, name = "DesertAir")
 })
 public abstract class Air extends Entities {
-    private float humidity;
-    private float temperature;
-    private float oxygenLevel;
+    private double humidity;
+    private double temperature;
+    private double oxygenLevel;
     private String airQuality;
     @JsonIgnore
     private double airToxicity;
 
-    public float getHumidity() {
+    public double getHumidity() {
         return humidity;
     }
 
-    public void setHumidity(float humidity) {
+    public void setHumidity(double humidity) {
         this.humidity = humidity;
     }
 
-    public float getTemperature() {
+    public double getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(float temperature) {
+    public void setTemperature(double temperature) {
         this.temperature = temperature;
     }
 
-    public float getOxygenLevel() {
+    public double getOxygenLevel() {
         return oxygenLevel;
     }
 
-    public void setOxygenLevel(float oxygenLevel) {
+    public void setOxygenLevel(double oxygenLevel) {
         this.oxygenLevel = oxygenLevel;
     }
 

@@ -1,7 +1,7 @@
 package entities.air;
 
 public class DesertAir extends Air {
-    private float dustParticles; //desert
+    private double dustParticles; //desert
     private double airQualityScore;
 
     @Override
@@ -20,11 +20,11 @@ public class DesertAir extends Air {
     public double getAirQualityScore() {
         return airQualityScore;
     }
-    public float getDustParticles() {
+    public double getDustParticles() {
         return dustParticles;
     }
 
-    public void setDustParticles(float dustParticles) {
+    public void setDustParticles(double dustParticles) {
         this.dustParticles = dustParticles;
     }
 }

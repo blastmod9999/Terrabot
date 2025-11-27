@@ -33,6 +33,15 @@ import terraBot.TerraBot;
 class Commands {
     private String command;
     private int timestamp;
+    private int timeToCharge;
+
+    public int getTimeToCharge() {
+        return timeToCharge;
+    }
+
+    public void setTimeToCharge(int timeToCharge) {
+        this.timeToCharge = timeToCharge;
+    }
 
     public String getCommand() {
         return command;
@@ -87,6 +96,13 @@ class WorldManager {
     //public WorldManager(InitializeMap map, Robot robot) {}
 
 
+    public boolean isSimStarted() {
+        return isSimStarted;
+    }
+
+    public void setSimStarted(boolean simStarted) {
+        isSimStarted = simStarted;
+    }
 
     void calculateMap(InitializeMap map) {
         MapBox[][] mapBox = map.getEnvMap();
@@ -112,17 +128,37 @@ class WorldManager {
     }
 
 
-    public WorldManager(InitializeMap map, SimulationParams simulationParams) {
+    public WorldManager(ArrayList<SimulationParams> simulationParams, int iteration) {
+
+        SimulationParams simulationParam = simulationParams.get(iteration);
+
+        InitializeMap map = new InitializeMap(simulationParam.getTerritoryDim());
+        map.populateMap(simulationParam.getTerritorySectionParams());
+
         this.map = map;
-        this.simulationParams = simulationParams;
-        this.terraBot = new TerraBot(simulationParams.getEnergyPoints());
+        this.simulationParams = simulationParam;
+        this.terraBot = new TerraBot(simulationParam.getEnergyPoints());
     }
 
-    public ObjectNode commandManager(Commands command) {
+    public ObjectNode commandManager(Commands command, ArrayList<SimulationParams> simulationParams) {
+
+        //new WorldManager(simulationParams,1);
+
         ObjectNode outputNode = OBJECT_MAPPER.createObjectNode();
         outputNode.put("command", command.getCommand());
 
-        switch (command.getCommand()) {
+        if(terraBot.isCharging()) {
+            if(command.getTimestamp() >= terraBot.getChargeFinTimestamp())
+                terraBot.setCharging(false);
+            else {
+                outputNode.put("message", "ERROR: Robot still charging. Cannot perform action");
+                outputNode.put("timestamp", command.getTimestamp());
+            }
+
+        }
+
+        if(!terraBot.isCharging())
+            switch (command.getCommand()) {
             case "startSimulation":
                 if (isSimStarted) {
                     outputNode.put("message", "ERROR: Simulation already started. Cannot perform action");
@@ -179,6 +215,17 @@ class WorldManager {
                 break;
 
             case "rechargeBattery":
+                if (!isSimStarted) {
+                    outputNode.put("message", "ERROR: Simulation not started. Cannot perform action");
+                    outputNode.put("timestamp", command.getTimestamp());
+                } else {
+                    terraBot.setChargeFinTimestamp(command.getTimestamp() + command.getTimeToCharge());
+                    terraBot.setCharging(true);
+                    terraBot.setBatteryCharge(terraBot.getBatteryCharge()+command.getTimeToCharge());
+                    outputNode.put("message", "Robot battery is charging.");
+                    outputNode.put("timestamp", command.getTimestamp());
+                    //IO.println("TIME TO CHARGE BATTERY : " + command.getTimeToCharge());
+                }
                 break;
 
             case "scanObject":
@@ -188,11 +235,19 @@ class WorldManager {
                 break;
 
             case "getEnergyStatus":
+                if (!isSimStarted) {
+                    outputNode.put("message", "ERROR: Simulation not started. Cannot perform action");
+                    outputNode.put("timestamp", command.getTimestamp());
+                } else {
+                    outputNode.put("message", "TerraBot has "+ terraBot.getBatteryCharge() +" energy points left.");
+                    outputNode.put("timestamp", command.getTimestamp());
+                }
                 break;
 
             default:
                 break;
-        }
+            }
+
 
         return outputNode;
     }
@@ -349,29 +404,43 @@ public final class Main {
 
 
         ArrayList<SimulationParams> simulationParams = inputHolder.getSimulationParams();
-        SimulationParams sim = simulationParams.getFirst();
+        //SimulationParams sim = simulationParams.getLast();
 
         ArrayList<Commands> commands = inputHolder.getCommands();
 
 
-        InitializeMap worldMap = new InitializeMap(sim.getTerritoryDim());
-        worldMap.populateMap(sim.getTerritorySectionParams());
+        //InitializeMap worldMap = new InitializeMap(sim.getTerritoryDim());
+        //worldMap.populateMap(sim.getTerritorySectionParams());
 
-        WorldManager worldManager = new WorldManager(worldMap,sim);
+        //WorldManager worldManager = new WorldManager(worldMap,sim);
 
+        WorldManager worldManager = new WorldManager(simulationParams,0);
+
+        int iteration = 0;
         for (Commands command : commands) {
             //IO.println(command.getCommand() + " timestamp : " + command.getTimestamp());
-            ObjectNode out = worldManager.commandManager(command);
+
+            ObjectNode out = worldManager.commandManager(command,simulationParams);
 
             if(out != null) {
                 output.add(out);
+            }
+
+            if (command.getCommand().equals("endSimulation") &&
+                    out.has("message") &&
+                    out.get("message").asText().equals("Simulation has ended.")) {
+
+                iteration++;
+                if (iteration < simulationParams.size()) {
+                    worldManager = new WorldManager(simulationParams, iteration);
+                }
             }
         }
 
 
 
 
-        worldMap.printMapBox();
+        //worldMap.printMapBox();
 
         //IO.println(sim.getTerritoryDim() + sim.getEnergyPoints() + sim.getTerritorySectionParams());
 

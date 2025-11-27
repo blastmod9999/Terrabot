@@ -1,7 +1,7 @@
 package entities.soil;
 
 public class DesertSoil extends Soil {
-    private float salinity; //DesertSoil
+    private double salinity; //DesertSoil
     private double soilQualityScore;
 
     @Override
@@ -19,11 +19,11 @@ public class DesertSoil extends Soil {
             setSoilQuality("poor");
         }
     }
-    public float getSalinity() {
+    public double getSalinity() {
         return salinity;
     }
 
-    public void setSalinity(float salinity) {
+    public void setSalinity(double salinity) {
         this.salinity = salinity;
     }
 

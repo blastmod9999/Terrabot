@@ -1,7 +1,7 @@
 package entities.air;
 
 public class MountainAir extends Air {
-    private float altitude; //montan
+    private double altitude; //montan
     private double airQualityScore;
 
     @Override
@@ -20,11 +20,11 @@ public class MountainAir extends Air {
         return airQualityScore;
     }
 
-    public float getAltitude() {
+    public double getAltitude() {
         return altitude;
     }
 
-    public void setAltitude(float altitude) {
+    public void setAltitude(double altitude) {
         this.altitude = altitude;
     }
 }
