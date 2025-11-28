@@ -1,5 +1,6 @@
 package entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import main.*;
 import java.util.ArrayList;
 
@@ -7,6 +8,8 @@ public abstract class Entities {
     public String type;
     public String name;
     public double mass;
+    @JsonIgnore
+    public boolean scanned = false;
     public ArrayList<Sections> sections;
 
     public String getType() {

@@ -1,5 +1,7 @@
 package map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import entities.Entities;
 import entities.air.Air;
 import entities.animal.Animals;
 import entities.plant.Plants;
@@ -14,6 +16,7 @@ public class InitializeMap {
     private MapBox[][] envMap;
     private int width;
     private int height;
+    ObjectMapper mapper = new ObjectMapper();
 
 
     public MapBox[][] getEnvMap() {
@@ -45,7 +48,7 @@ public class InitializeMap {
                     int y = soil.getSections().get(j).getY();
 
                     if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
-                        envMap[x][y].setSoil(soil);
+                        envMap[x][y].setSoil(soil.copy());
                     }
                 }
             }
@@ -59,7 +62,8 @@ public class InitializeMap {
                     int y = plant.getSections().get(j).getY();
 
                     if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
-                        envMap[x][y].setPlant(plant);
+                        /// ///FACEM DEEPCOPY CA DACA NU PIERDEM ORE IN SIR SA NE DAM SEAMA DE CE NU MERGE
+                        envMap[x][y].setPlant(plant.copy());
                     }
                 }
             }
@@ -73,7 +77,7 @@ public class InitializeMap {
                     int y = animal.getSections().get(j).getY();
 
                     if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
-                        envMap[x][y].setAnimal(animal);
+                        envMap[x][y].setAnimal(animal.copy());
                     }
                 }
             }
@@ -87,7 +91,7 @@ public class InitializeMap {
                     int y = water.getSections().get(j).getY();
 
                     if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
-                        envMap[x][y].setWater(water);
+                        envMap[x][y].setWater(water.copy());
                     }
                 }
             }
@@ -101,7 +105,7 @@ public class InitializeMap {
                     int y = air.getSections().get(j).getY();
 
                     if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
-                        envMap[x][y].setAir(air);
+                        envMap[x][y].setAir(air.copy());
                     }
                 }
             }

@@ -4,10 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import entities.Entities;
+import entities.animal.Animals;
+import entities.plant.Plants;
+import entities.water.Water;
 import map.InitializeMap;
 import map.MapBox;
+import simulation.Commands;
+
+import java.util.ArrayList;
 
 public class TerraBot {
+    private ArrayList<Entities> inventory = new ArrayList<Entities>();
     private static final ObjectMapper MAPPER = new ObjectMapper();
     String outputMessage = "ERROR";
     private int batteryCharge;
@@ -88,6 +96,38 @@ public class TerraBot {
             }
         }
         return outputMessage;
+    }
+
+    public String scanObject(InitializeMap map, String color, String smell,String sound) {
+        MapBox[][] mapBox = map.getEnvMap();
+        String result = "ERROR";
+        Water water;
+        Animals animal;
+        Plants plant;
+        if(sound.equals("none") && smell.equals("none")){
+            if(mapBox[this.x][this.y].getWater()!=null){
+                result = "water";
+                water = mapBox[this.x][this.y].getWater();
+                water.scanned = true;
+                inventory.add(water);
+            }
+        } else if(sound.equals("none") && !smell.equals("none")){
+            if(mapBox[this.x][this.y].getPlant()!=null){
+                result = "a plant";
+                plant = mapBox[this.x][this.y].getPlant();
+                plant.scanned = true;
+                inventory.add(plant);
+            }
+        } else if(!sound.equals("none")){
+            if(mapBox[this.x][this.y].getAnimal()!=null){
+                animal = mapBox[this.x][this.y].getAnimal();
+                result = "an animal";
+                animal.scanned = true;
+                inventory.add(animal);
+            }
+        }
+
+        return result;
     }
 
     public int getX() {

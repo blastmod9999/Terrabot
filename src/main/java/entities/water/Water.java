@@ -1,6 +1,13 @@
 package entities.water;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import entities.Entities;
+import entities.air.Air;
+import entities.plant.Plants;
+import entities.soil.Soil;
+import map.MapBox;
 
 import static java.lang.Math.abs;
 
@@ -12,6 +19,8 @@ public class Water extends Entities {
     private float pH;
     private boolean isFrozen;
     private double water_quality;
+    @JsonIgnore
+    private int iterationUpdates;
 
     public void setWater_quality()
     {
@@ -28,6 +37,57 @@ public class Water extends Entities {
                 + 0.1 * turbidity_score
                 + 0.15 * contaminant_score
                 + 0.2 * frozen_score) * 100;
+    }
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    //Facem deepcopy nu Shallow
+    // + try catch generat de IDE
+    // Source - https://stackoverflow.com/questions/49903859/deep-copy-using-jackson-string-or-jsonnode
+// Posted by Rad, modified by community. See post 'Timeline' for change history
+// Retrieved 2025-11-27, License - CC BY-SA 3.0
+
+    //MyPojo myPojo = new MyPojo();
+    //ObjectMapper mapper = new ObjectMapper();
+    //MyPojo newPojo = mapper.treeToValue(mapper.valueToTree(myPojo), MyPojo.class);
+
+    public Water copy() {
+        try {
+            return MAPPER.treeToValue(MAPPER.valueToTree(this), Water.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void UpdateBox(MapBox box) {
+
+
+        //TIMP DE 2 ITERATII CRESTE SI FACE CE TREBUIE LA SOIL
+        iterationUpdates++;
+        if(iterationUpdates % 2 == 0)
+        {
+            if(box.getSoil()!=null){
+                Soil soil = box.getSoil();
+                double updated = soil.getWaterRetention() + 0.1;
+                updated = Math.round(updated * 100) / 100.0;
+                soil.setWaterRetention(updated);
+            }
+            if(box.getAir()!=null){
+                Air air = box.getAir();
+                double updated = air.getHumidity() + 0.1;
+                updated = Math.round(updated * 100) / 100.0;
+                air.setHumidity(updated);
+            }
+
+        }
+
+        if(box.getPlant()!=null) {
+            Plants plant = box.getPlant();
+            double updated = plant.getGrowth() + 0.2;
+            updated = Math.round(updated * 100) / 100.0;
+            plant.setGrowth(updated);
+        }
+
     }
 
     public double getWater_quality() {

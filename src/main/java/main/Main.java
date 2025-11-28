@@ -26,39 +26,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import map.InitializeMap;
 import map.MapBox;
 import map.TerritorySectionParams;
+import simulation.Commands;
 import simulation.SimulationParams;
+import simulation.WeatherConditions;
 import terraBot.TerraBot;
 
 
-class Commands {
-    private String command;
-    private int timestamp;
-    private int timeToCharge;
-
-    public int getTimeToCharge() {
-        return timeToCharge;
-    }
-
-    public void setTimeToCharge(int timeToCharge) {
-        this.timeToCharge = timeToCharge;
-    }
-
-    public String getCommand() {
-        return command;
-    }
-
-    public void setCommand(String command) {
-        this.command = command;
-    }
-
-    public int getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(int timestamp) {
-        this.timestamp = timestamp;
-    }
-}
 
 class InputHolder {
     ArrayList<SimulationParams> simulationParams;
@@ -90,7 +63,7 @@ class WorldManager {
     private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private boolean isSimStarted = false;
     private InitializeMap map;
-    private int timestamp;
+    private int timeStopWeather;
     //Instantiem robotul
     private TerraBot terraBot; ;
     //public WorldManager(InitializeMap map, Robot robot) {}
@@ -146,6 +119,14 @@ class WorldManager {
 
         ObjectNode outputNode = OBJECT_MAPPER.createObjectNode();
         outputNode.put("command", command.getCommand());
+
+        if(isSimStarted() && timeStopWeather <= command.getTimestamp()) {
+            updateWeather();
+        }
+
+        if(isSimStarted()) {
+            UpdateScannedBox();
+        }
 
         if(terraBot.isCharging()) {
             if(command.getTimestamp() >= terraBot.getChargeFinTimestamp())
@@ -203,6 +184,21 @@ class WorldManager {
                 break;
 
             case "changeWeatherConditions":
+                if (!isSimStarted) {
+                    outputNode.put("message", "ERROR: Simulation not started. Cannot perform action");
+                } else {
+                    IO.println(command.getType());
+                    if(ChangeWeather(map,command)) {
+                        outputNode.put("message", "The weather has changed.");
+                    } else
+                        outputNode.put("message", "ERROR: The weather change does not affect the environment. Cannot perform action");
+                    //WeatherConditions(map,command.getType(),command.getRainfall());
+                    outputNode.put("timestamp", command.getTimestamp());
+                    timeStopWeather+=command.getTimestamp()+3;
+
+                }
+
+
                 break;
 
             case "moveRobot":
@@ -227,8 +223,21 @@ class WorldManager {
                     //IO.println("TIME TO CHARGE BATTERY : " + command.getTimeToCharge());
                 }
                 break;
-
             case "scanObject":
+                if(!isSimStarted) {
+                    outputNode.put("message", "ERROR: Simulation not started. Cannot perform action");
+                    outputNode.put("timestamp", command.getTimestamp());
+                } else {
+                    String result = terraBot.scanObject(map, command.getColor(), command.getSmell(), command.getSound());
+                    if(result.equals("ERROR")) {
+                        outputNode.put("message", "ERROR: Object not found. Cannot perform action");
+                    } else {
+                        outputNode.put("message", "The scanned object is "+ result +".");
+                        terraBot.setBatteryCharge(terraBot.getBatteryCharge() - 7);
+                    }
+                    outputNode.put("timestamp", command.getTimestamp());
+
+                }
                 break;
 
             case "learnFact":
@@ -249,7 +258,70 @@ class WorldManager {
             }
 
 
+
         return outputNode;
+    }
+
+
+
+    void UpdateScannedBox(){
+        MapBox[][] mapBox = map.getEnvMap();
+        for(int j=0; j < map.getWidth(); j++) {
+            for(int i=0; i < map.getHeight(); i++) {
+                if(mapBox[i][j].getPlant() != null) {
+                    Plants plant =  mapBox[i][j].getPlant();
+                    if(plant.scanned){
+                        //IO.println("AICI DOAR DE 3 ORI IN PRINCIPIU");
+                        plant.UpdateBox(mapBox[i][j].getAir());
+                    }
+                }
+                if(mapBox[i][j].getWater() != null) {
+                    Water water = mapBox[i][j].getWater();
+                    if(water.scanned){
+                        water.UpdateBox(mapBox[i][j]);
+                    }
+                }
+
+                if(mapBox[i][j].getAnimal() != null) {
+                    Animals animal = mapBox[i][j].getAnimal();
+                    if(animal.scanned){
+                        //animal.move(map, i, j);
+                    }
+                }
+            }
+        }
+
+    }
+
+    boolean ChangeWeather (InitializeMap map, Commands command) {
+        boolean result = false;
+        MapBox[][] mapBox = map.getEnvMap();
+
+        for(int j=0; j < map.getWidth(); j++) {
+            for(int i=0; i < map.getHeight(); i++) {
+                if(mapBox[i][j].getAir() != null) {
+                    Air air = mapBox[i][j].getAir();
+                    if (air.ApplyWeatherConditions(command)) {
+                        result = true;
+                    }
+                }
+            }
+        }
+
+
+
+        return result;
+    }
+
+    private void updateWeather() {
+        MapBox[][] mapBox = map.getEnvMap();
+        for (int j = 0; j < map.getWidth(); j++) {
+            for (int i = 0; i < map.getHeight(); i++) {
+                if (mapBox[i][j].getAir() != null) {
+                    mapBox[i][j].getAir().resetWeather();
+                }
+            }
+        }
     }
 
     ArrayNode printMap(InitializeMap map) {
@@ -341,6 +413,7 @@ class WorldManager {
             ObjectNode airData = OBJECT_MAPPER.valueToTree(air);
             airData.remove("airQuality");
             airData.remove("airQualityScore");
+            airData.remove("dustParticles");
             airData.put("airQuality", air.getAirQualityScore());
             airData.remove("sections");
             outputNode.set("air", airData);

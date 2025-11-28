@@ -235,6 +235,7 @@
       "command": "startSimulation",
       "timestamp": 1
     },
+
     {
       "command": "scanObject",
       "color": "pink",

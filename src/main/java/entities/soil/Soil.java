@@ -1,7 +1,10 @@
 package entities.soil;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import entities.Entities;
+import entities.air.Air;
 import main.*;
 
 
@@ -24,6 +27,26 @@ public abstract class Soil extends Entities {
     private double soilpH;
     private double organicMatter;
     private String soilQuality;
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    //Facem deepcopy nu Shallow
+    // + try catch generat de IDE
+    // Source - https://stackoverflow.com/questions/49903859/deep-copy-using-jackson-string-or-jsonnode
+// Posted by Rad, modified by community. See post 'Timeline' for change history
+// Retrieved 2025-11-27, License - CC BY-SA 3.0
+
+    //MyPojo myPojo = new MyPojo();
+    //ObjectMapper mapper = new ObjectMapper();
+    //MyPojo newPojo = mapper.treeToValue(mapper.valueToTree(myPojo), MyPojo.class);
+
+    public Soil copy() {
+        try {
+            return MAPPER.treeToValue(MAPPER.valueToTree(this), Soil.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public double getNitrogen() {
         return nitrogen;

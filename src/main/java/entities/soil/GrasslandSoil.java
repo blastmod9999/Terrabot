@@ -6,7 +6,7 @@ public class GrasslandSoil extends Soil {
 
     @Override
     public void setSoilQualityScore() {
-        soilQualityScore = 		(getNitrogen() * 1.3) + (getOrganicMatter() * 1.5) + (rootDensity * 0.8);
+        soilQualityScore = 	(getNitrogen() * 1.3) + (getOrganicMatter() * 1.5) + (rootDensity * 0.8);
 
         double normalizeScore = Math.max(0, Math.min(100, soilQualityScore));
         double finalResult = Math.round(normalizeScore * 100.0) / 100.0;
@@ -23,6 +23,12 @@ public class GrasslandSoil extends Soil {
     @Override
     public double posibilityToGetStuck(){
         return (((50 - rootDensity) + getWaterRetention() * 0.5) / 75) * 100;
+    }
+
+    @Override
+    public double getSoilQualityScore()
+    {
+        return soilQualityScore;
     }
 
     public double getRootDensity() {

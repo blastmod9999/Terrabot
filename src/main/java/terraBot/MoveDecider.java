@@ -26,6 +26,8 @@ public class MoveDecider {
     int calculatePosibilityToGetDamagedByAir(MapBox box)
     {
         possibilityToGetDamagedByAir = box.getAir().getAirToxicity();
+        if(possibilityToGetDamagedByAir<0)
+            possibilityToGetDamagedByAir = 0;
         return 1;
     }
 

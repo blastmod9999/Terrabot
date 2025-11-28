@@ -3,7 +3,13 @@ package entities.air;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import entities.Entities;
+import entities.plant.Plants;
+import simulation.Commands;
+
+//import main.Commands;
 
 
 @JsonTypeInfo(
@@ -20,12 +26,48 @@ import entities.Entities;
         @JsonSubTypes.Type(value = DesertAir.class, name = "DesertAir")
 })
 public abstract class Air extends Entities {
+
+    public enum AirType {
+        PolarAir,
+        TemperateAir,
+        TropicalAir,
+        MountainAir,
+        DesertAir
+    }
+    protected AirType type;
     private double humidity;
     private double temperature;
     private double oxygenLevel;
     private String airQuality;
+
     @JsonIgnore
     private double airToxicity;
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    //Facem deepcopy nu Shallow
+    // + try catch generat de IDE
+    // Source - https://stackoverflow.com/questions/49903859/deep-copy-using-jackson-string-or-jsonnode
+// Posted by Rad, modified by community. See post 'Timeline' for change history
+// Retrieved 2025-11-27, License - CC BY-SA 3.0
+
+    //MyPojo myPojo = new MyPojo();
+    //ObjectMapper mapper = new ObjectMapper();
+    //MyPojo newPojo = mapper.treeToValue(mapper.valueToTree(myPojo), MyPojo.class);
+
+    public Air copy() {
+        try {
+            return MAPPER.treeToValue(MAPPER.valueToTree(this), Air.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public boolean ApplyWeatherConditions(Commands command) {
+        return false;
+    }
+
 
     public double getHumidity() {
         return humidity;
@@ -79,5 +121,10 @@ public abstract class Air extends Entities {
         }
     }
 
+    public void updateAirQualityScore(double score) {}
+
     public void setAirQualityScore() {}
+
+    public void resetWeather() {
+    }
 }
