@@ -285,7 +285,7 @@ class WorldManager {
                 if(mapBox[i][j].getAnimal() != null) {
                     Animals animal = mapBox[i][j].getAnimal();
                     if(animal.scanned){
-                        //animal.move(map, i, j);
+                        animal.AnimalMove(map, i, j);
                     }
                 }
             }

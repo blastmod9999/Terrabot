@@ -30,8 +30,16 @@ import java.util.ArrayList;
 public class Animals extends Entities {
 
     private String state;
-
+    int iteration;
     private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    public void AnimalMove(InitializeMap map,int x,int y) {
+        iteration++;
+        if(iteration % 2 == 0){
+            AnimalMoveDecider(map,x,y);
+        }
+
+    }
 
     //Facem deepcopy nu Shallow
     // + try catch generat de IDE
@@ -45,62 +53,128 @@ public class Animals extends Entities {
 
     //locatia curenta
     int x, y;
-    int[] dx = {0,1,0,-1};
-    int[] dy = {1,0,-1,0};
+//    int[] dx = {0,1,0,-1};
+//    int[] dy = {1,0,-1,0};
 
-//    void AnimalMoveDecider(InitializeMap map, int x, int y){
-//        MapBox[][] mapBox = map.getEnvMap();
-//        ArrayList<Water> waters = new ArrayList<>();
-//        ArrayList<Plants> plants = new ArrayList<>();
-//        this.x = x;
-//        this.y = y;
-//        int new_x = 0;
-//        int new_y = 0;
-//        int maximum = -9999;
-//
-//        int found = 0;
-//        for (int i = 0; i < dx.length; i++) {
-//            int new_i = x + dx[i];
-//            int new_j = y + dy[i];
-//            double maxWaterQ = -99;
-//            if (new_i >= 0 && new_j >= 0 && new_i < map.getHeight() && new_j < map.getWidth()) {
-//                if(mapBox[new_i][new_j].getPlant()!=null){
-//                    waters.add(mapBox[new_i][new_j].getWater());
-//                }
-//                if(mapBox[new_i][new_j].getPlant()!=null){
-//                    plants.add(mapBox[new_i][new_j].getPlant());
-//                }
-//            }
-//        }
-//
-//        MapBox vecinbun = new MapBox();
-//
-//        for(int i = 0; i < 4 ;i++)
-//        {
-//            if(waters.get(i) != null && plants.get(i) != null){
-//                    vecinbun
-//            }
-//        }
-//
-//    }
-//
-//    int CalculateFavorableScore(MapBox mapBox) {
-//        int score = 0;
-//        if(mapBox.getPlant()!=null){
-//            Plants plant = mapBox.getPlant();
-//            if(plant.scanned){
-//                score+=10;
-//            }
-//        }
-//        if(mapBox.getWater()!=null){
-//            Water water = mapBox.getWater();
-//            if(water.scanned){
-//                score+=20;
-//            }
-//        }
-//
-//        return score;
-//    }
+    int[] dx = {-1,0,1,0};
+    int[] dy = {0,1,0,-1};
+    void AnimalMoveDecider(InitializeMap map, int x, int y) {
+        MapBox[][] mapBox = map.getEnvMap();
+
+        ArrayList<Water> waters = new ArrayList<>();
+        ArrayList<Plants> plants = new ArrayList<>();
+        ArrayList<Animals> animals = new ArrayList<>();
+        ArrayList<Indices> indices = new ArrayList<>();
+
+        this.x = x;
+        this.y = y;
+
+
+        for (int i = 0; i < dx.length; i++) {
+            int new_i = x + dx[i];
+            int new_j = y + dy[i];
+
+            if (new_i >= 0 && new_j >= 0 && new_i < map.getHeight() && new_j < map.getWidth()) {
+
+                waters.add(mapBox[new_i][new_j].getWater());
+                plants.add(mapBox[new_i][new_j].getPlant());
+                animals.add(mapBox[new_i][new_j].getAnimal());
+
+                Indices indic = new Indices();
+                indic.x = new_i;
+                indic.y = new_j;
+                indices.add(indic);
+            } else {
+                waters.add(null);
+                plants.add(null);
+                animals.add(null);
+                indices.add(null);
+            }
+        }
+
+
+        int bestScore = -1;
+        double bestWaterQ = -1.0;
+        int bestIndex = -1;
+
+
+        for (int i = 0; i < 4; i++) {
+            if (indices.get(i) == null) continue;
+            boolean hasWater = (waters.get(i) != null);
+            boolean hasPlant = (plants.get(i) != null);
+            // boolean hasAnimal = (animals.get(i) != null);
+
+            int currentScore = 0;
+            double currentWaterQ = 0.0;
+
+            if (hasWater) {
+                currentWaterQ = waters.get(i).getWater_quality();
+            }
+
+
+            if (hasPlant && hasWater) {
+                currentScore = 3;
+            } else if (hasPlant) {
+                currentScore = 2;
+            } else if (hasWater) {
+                currentScore = 1;
+            } else {
+                currentScore = 0;
+            }
+
+
+            boolean isBetter = false;
+
+            if (currentScore > bestScore) {
+                isBetter = true;
+            } else if (currentScore == bestScore) {
+                if (currentScore == 3 || currentScore == 1) {
+                    if (currentWaterQ > bestWaterQ) {
+                        isBetter = true;
+                    }
+                }
+
+            }
+
+
+            if (isBetter) {
+                bestScore = currentScore;
+                bestWaterQ = currentWaterQ;
+                bestIndex = i;
+            }
+        }
+
+
+        if (bestIndex != -1) {
+
+            mapBox[this.x][this.y].setAnimal(null);
+            this.x = indices.get(bestIndex).x;
+            this.y = indices.get(bestIndex).y;
+            mapBox[this.x][this.y].setAnimal(this);
+
+        }
+    }
+
+    int CalculateFavorableScore(MapBox mapBox) {
+        int score = 0;
+        if(mapBox.getPlant()!=null){
+            Plants plant = mapBox.getPlant();
+            if(plant.scanned){
+                score+=10;
+            }
+        }
+        if(mapBox.getWater()!=null){
+            Water water = mapBox.getWater();
+            if(water.scanned){
+                score+=20;
+            }
+        }
+
+        return score;
+    }
+
+
+
 
     public Animals copy() {
         try {
@@ -110,4 +184,26 @@ public class Animals extends Entities {
         }
     }
 
+}
+
+
+class Indices {
+    int x;
+    int y;
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
 }
