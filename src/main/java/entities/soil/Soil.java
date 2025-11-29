@@ -42,6 +42,7 @@ public abstract class Soil extends Entities {
 
     /**
      * Javadoc for method getNitrogen.
+     * Intoarce cantitatea de N
      */
     public double getNitrogen() {
         return nitrogen;
@@ -49,6 +50,7 @@ public abstract class Soil extends Entities {
 
     /**
      * Javadoc for method setNitrogen.
+     * Seteaza cantitatea de N
      */
     public void setNitrogen(final double nitrogen) {
         this.nitrogen = nitrogen;
@@ -98,6 +100,8 @@ public abstract class Soil extends Entities {
 
     /**
      * Javadoc for method setSoilQualityScore.
+     * Cea mai importanta metoda , suprascrisa de ficare subclasa in parte
+     * calculeaza scorul calitatii de care ne folosim peste tot in tema.
      */
     public void setSoilQualityScore() {
     }
@@ -125,6 +129,8 @@ public abstract class Soil extends Entities {
 
     /**
      * Javadoc for method posibilityToGetStuck.
+     * Esentiala pentru miscarea robotului pe harta , intoarce un risk care mai apoi este
+     * analizate de terrabot.
      */
     public double posibilityToGetStuck() {
         return 0;

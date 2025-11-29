@@ -10,9 +10,6 @@ public final class DesertSoil extends Soil {
     private double soilQualityScore;
 
     @Override
-/**
- * Javadoc for method setSoilQualityScore.
- */
     public void setSoilQualityScore() {
         soilQualityScore = (getNitrogen() * MagicNumbers.POINT_FIVE) + (getWaterRetention()
                 * MagicNumbers.POINT_THREE) - (salinity * 2);
@@ -30,24 +27,15 @@ public final class DesertSoil extends Soil {
         }
     }
 
-    /**
-     * Javadoc for method getSalinity.
-     */
     public double getSalinity() {
         return salinity;
     }
 
-    /**
-     * Javadoc for method setSalinity.
-     */
     public void setSalinity(final double salinity) {
         this.salinity = salinity;
     }
 
     @Override
-/**
- * Javadoc for method posibilityToGetStuck.
- */
     public double posibilityToGetStuck() {
         return ((ONE_HUNDRED_INT - getWaterRetention() + salinity) / ONE_HUNDRED_INT)
                 * ONE_HUNDRED_INT;

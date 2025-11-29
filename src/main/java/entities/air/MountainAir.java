@@ -1,19 +1,21 @@
 package entities.air;
 
+import lombok.Getter;
+import lombok.Setter;
 import simulation.Commands;
 import utils.MagicNumbers;
 
 import static utils.MagicNumbers.MAX_MOUNTAIN;
 
 public final class MountainAir extends Air {
+
+    @Setter
+    @Getter
     private double altitude; //montan
     private double airQualityScore;
     private int numberOfHikers;
 
 
-/**
- * Javadoc for method ApplyWeatherConditions.
- */
     @Override
     public boolean applyWeatherConditions(final Commands command) {
         if (command.getType().equals("peopleHiking")) {
@@ -26,9 +28,6 @@ public final class MountainAir extends Air {
     }
 
 
-/**
- * Javadoc for method resetWeather.
- */
     @Override
     public void resetWeather() {
         this.numberOfHikers = 0;
@@ -36,9 +35,6 @@ public final class MountainAir extends Air {
     }
 
 
-/**
- * Javadoc for method setAirQualityScore.
- */
     @Override
     public void setAirQualityScore() {
 
@@ -55,26 +51,9 @@ public final class MountainAir extends Air {
 
     }
 
-
-/**
- * Javadoc for method getAirQualityScore.
- */
     @Override
     public double getAirQualityScore() {
         return airQualityScore;
     }
 
-    /**
-     * Javadoc for method getAltitude.
-     */
-    public double getAltitude() {
-        return altitude;
-    }
-
-    /**
-     * Javadoc for method setAltitude.
-     */
-    public void setAltitude(final double altitude) {
-        this.altitude = altitude;
-    }
 }

@@ -66,10 +66,9 @@ class WorldManager {
     private final TerraBot terraBot;
     /**
      * -- GETTER --
-     *  Javadoc for method isSimStarted.
+     * Javadoc for method isSimStarted.
      * -- SETTER --
-     *  Javadoc for method setSimStarted.
-
+     * Javadoc for method setSimStarted.
      */
     @Setter
     @Getter
@@ -117,16 +116,19 @@ class WorldManager {
      * Javadoc for method commandManager.
      */
     public ObjectNode commandManager(final Commands command) {
-
-        //new WorldManager(simulationParams,1);
-
         final ObjectNode outputNode = OBJECT_MAPPER.createObjectNode();
         outputNode.put("command", command.getCommand());
-
         //prindem din urma timpestamp pt plante etc.. acestea dau oxigen si cand
         //se incarca robotul sau sare de la un timestamp la altul;
         final int currentTimestamp = command.getTimestamp();
         final int timeToCatch = currentTimestamp - lastProcessedTime;
+
+        if (!isSimStarted() && !command.getCommand().equals("startSimulation")) {
+            outputNode.put("message",
+                           "ERROR: Simulation not started. Cannot perform action");
+            outputNode.put("timestamp", command.getTimestamp());
+            return outputNode;
+        }
 
         if (isSimStarted && timeToCatch > 1) {
             for (int i = 1; i < timeToCatch; i++) {
@@ -168,194 +170,113 @@ class WorldManager {
                     }
                     outputNode.put("timestamp", command.getTimestamp());
                     break;
-
                 case "printEnvConditions":
-                    if (!isSimStarted) {
-                        outputNode.put("message",
-                                       "ERROR: Simulation not started. Cannot perform action");
-                    } else {
-                        outputNode.set("output",
-                                       printEnvConditions(map, terraBot.getX(), terraBot.getY()));
-                    }
-
+                    outputNode.set("output",
+                                   printEnvConditions(map, terraBot.getX(), terraBot.getY()));
                     outputNode.put("timestamp", command.getTimestamp());
                     break;
-
                 case "printMap":
-                    if (!isSimStarted) {
-                        outputNode.put("message",
-                                       "ERROR: Simulation not started. Cannot perform action");
-                    } else {
-                        outputNode.set("output", printMap(map));
-                    }
-
+                    outputNode.set("output", printMap(map));
                     outputNode.put("timestamp", command.getTimestamp());
                     break;
-
                 case "endSimulation":
-                    if (!isSimStarted) {
-                        outputNode.put("message",
-                                       "ERROR: Simulation not started. Cannot perform action");
-                    } else {
-                        outputNode.put("message", "Simulation has ended.");
-                        isSimStarted = false;
-                    }
+                    outputNode.put("message", "Simulation has ended.");
+                    isSimStarted = false;
                     outputNode.put("timestamp", command.getTimestamp());
                     break;
-
                 case "changeWeatherConditions":
-                    if (!isSimStarted) {
-                        outputNode.put("message",
-                                       "ERROR: Simulation not started. Cannot perform action");
-                        outputNode.put("timestamp", command.getTimestamp());
+                    if (changeWeather(map, command)) {
+                        outputNode.put("message", "The weather has changed.");
                     } else {
-                        IO.println(command.getType());
-                        if (changeWeather(map, command)) {
-                            outputNode.put("message", "The weather has changed.");
-                        } else {
-                            outputNode.put("message",
-                                           "ERROR: The weather change does not affect "
-                                                   + "the environment. Cannot perform action");
-                        }
-                        outputNode.put("timestamp", command.getTimestamp());
-                        timeStopWeather += command.getTimestamp() + MagicNumbers.THREE;
-
-                    }
-                    break;
-
-                case "moveRobot":
-                    if (!isSimStarted) {
                         outputNode.put("message",
-                                       "ERROR: Simulation not started. Cannot perform action");
-                    } else {
-                        outputNode.put("message", terraBot.moveRobot(map));
+                                       "ERROR: The weather change does not affect "
+                                               + "the environment. Cannot perform action");
                     }
                     outputNode.put("timestamp", command.getTimestamp());
-
+                    timeStopWeather += command.getTimestamp() + MagicNumbers.THREE;
                     break;
-
+                case "moveRobot":
+                    outputNode.put("message", terraBot.moveRobot(map));
+                    outputNode.put("timestamp", command.getTimestamp());
+                    break;
                 case "rechargeBattery":
-                    if (!isSimStarted) {
-                        outputNode.put("message",
-                                       "ERROR: Simulation not started. Cannot perform action");
-                        outputNode.put("timestamp", command.getTimestamp());
-                    } else {
-                        terraBot.setChargeFinTimestamp(
-                                command.getTimestamp() + command.getTimeToCharge());
-                        terraBot.setCharging(true);
-                        terraBot.setBatteryCharge(
-                                terraBot.getBatteryCharge() + command.getTimeToCharge());
-                        lastProcessedTime = command.getTimestamp();
-                        outputNode.put("message", "Robot battery is charging.");
-                        outputNode.put("timestamp", command.getTimestamp());
-                    }
+                    terraBot.setChargeFinTimestamp(
+                            command.getTimestamp() + command.getTimeToCharge());
+                    terraBot.setCharging(true);
+                    terraBot.setBatteryCharge(
+                            terraBot.getBatteryCharge() + command.getTimeToCharge());
+                    lastProcessedTime = command.getTimestamp();
+                    outputNode.put("message", "Robot battery is charging.");
+                    outputNode.put("timestamp", command.getTimestamp());
                     break;
                 case "scanObject":
-                    if (!isSimStarted) {
-                        outputNode.put("message",
-                                       "ERROR: Simulation not started. Cannot perform action");
+                    if (terraBot.getBatteryCharge() - MagicNumbers.SCAN_COST <= 0) {
+                        outputNode.put("message", "ERROR: Not enough energy to perform action");
                         outputNode.put("timestamp", command.getTimestamp());
-                    } else {
-                        if (terraBot.getBatteryCharge() - MagicNumbers.SCAN_COST <= 0) {
-                            outputNode.put("message", "ERROR: Not enough energy to perform action");
-                            outputNode.put("timestamp", command.getTimestamp());
-                            break;
-                        }
-                        final String result = terraBot.scanObject(map, command.getColor(),
-                                                                  command.getSmell(),
-                                                                  command.getSound());
-                        if (result.equals("ERROR")) {
-                            outputNode.put("message",
-                                           "ERROR: Object not found. Cannot perform action");
-                        } else {
-                            outputNode.put("message", "The scanned object is " + result + ".");
-                            terraBot.setBatteryCharge(
-                                    terraBot.getBatteryCharge() - MagicNumbers.SCAN_COST);
-                        }
-                        outputNode.put("timestamp", command.getTimestamp());
-
+                        break;
                     }
+                    String scanResult = terraBot.scanObject(map, command.getColor(),
+                                                            command.getSmell(), command.getSound());
+                    if (scanResult.equals("ERROR")) {
+                        outputNode.put("message", "ERROR: Object not found. Cannot perform action");
+                    } else {
+                        outputNode.put("message", "The scanned object is " + scanResult + ".");
+                        terraBot.setBatteryCharge(
+                                terraBot.getBatteryCharge() - MagicNumbers.SCAN_COST);
+                    }
+                    outputNode.put("timestamp", command.getTimestamp());
                     break;
-
                 case "learnFact":
-                    if (!isSimStarted) {
+                    if (terraBot.getBatteryCharge() - 2 <= 0) {
                         outputNode.put("message",
-                                       "ERROR: Simulation not started. Cannot perform action");
+                                       "ERROR: Not enough battery left. Cannot perform action");
                         outputNode.put("timestamp", command.getTimestamp());
-                    } else {
-                        if (terraBot.getBatteryCharge() - 2 <= 0) {
-                            outputNode.put("message",
-                                           "ERROR: Not enough battery left. Cannot perform action");
-                            outputNode.put("timestamp", command.getTimestamp());
-                            break;
-                        }
-                        final String result = terraBot.getLearnFact()
-                                .addFactToDatabase(command.getSubject(), command.getComponents(),
-                                                   terraBot.getLearnMap(), terraBot.getInventory());
-                        if (result.equals("ERROR")) {
-                            outputNode.put("message",
-                                           "ERROR: Subject not yet saved. Cannot perform action");
-                            outputNode.put("timestamp", command.getTimestamp());
-                        } else {
-                            outputNode.put("message",
-                                           "The fact has been successfully saved in the database.");
-                            terraBot.setBatteryCharge(terraBot.getBatteryCharge() - 2);
-                        }
-                        outputNode.put("timestamp", command.getTimestamp());
+                        break;
                     }
+                    String learnRes = terraBot.getLearnFact().addFactToDatabase(
+                            command.getSubject(), command.getComponents(),
+                            terraBot.getLearnMap(), terraBot.getInventory()
+                    );
+                    if (learnRes.equals("ERROR")) {
+                        outputNode.put("message",
+                                       "ERROR: Subject not yet saved. Cannot perform action");
+                    } else {
+                        outputNode.put("message",
+                                       "The fact has been successfully saved in the database.");
+                        terraBot.setBatteryCharge(terraBot.getBatteryCharge() - 2);
+                    }
+                    outputNode.put("timestamp", command.getTimestamp());
                     break;
                 case "printKnowledgeBase":
-                    if (!isSimStarted) {
-                        outputNode.put("message",
-                                       "ERROR: Simulation not started. Cannot perform action");
-                    } else {
-                        outputNode.set("output", terraBot.printKnowledge());
-                        outputNode.put("timestamp", command.getTimestamp());
-                    }
-
+                    outputNode.set("output", terraBot.printKnowledge());
+                    outputNode.put("timestamp", command.getTimestamp());
                     break;
-
                 case "improveEnvironment":
-                    if (!isSimStarted) {
+                    if (terraBot.getBatteryCharge() - MagicNumbers.IMPROVE_COST <= 0) {
                         outputNode.put("message",
-                                       "ERROR: Simulation not started. Cannot perform action");
+                                       "ERROR: Not enough battery left. Cannot perform action");
                         outputNode.put("timestamp", command.getTimestamp());
-                    } else {
-                        if (terraBot.getBatteryCharge() - MagicNumbers.IMPROVE_COST <= 0) {
-                            outputNode.put("message",
-                                           "ERROR: Not enough battery left. Cannot perform action");
-                            outputNode.put("timestamp", command.getTimestamp());
-                            break;
-                        }
-                        final String result = terraBot.improvementType(command, map);
-                        if (result.equals("ERROR 1")) {
-                            outputNode.put("message",
-                                           "ERROR: Subject not yet saved. Cannot perform action");
-                        } else if (result.equals("ERROR 2")) {
-                            outputNode.put("message",
-                                           "ERROR: Fact not yet saved. Cannot perform action");
-                        } else {
-                            outputNode.put("message", result);
-                            terraBot.setBatteryCharge(
-                                    terraBot.getBatteryCharge() - MagicNumbers.IMPROVE_COST);
-
-                        }
-                        outputNode.put("timestamp", command.getTimestamp());
+                        break;
                     }
+                    String improveResult = terraBot.improvementType(command, map);
+                    if (improveResult.equals("ERROR 1")) {
+                        outputNode.put("message",
+                                       "ERROR: Subject not yet saved. Cannot perform action");
+                    } else if (improveResult.equals("ERROR 2")) {
+                        outputNode.put("message",
+                                       "ERROR: Fact not yet saved. Cannot perform action");
+                    } else {
+                        outputNode.put("message", improveResult);
+                        terraBot.setBatteryCharge(
+                                terraBot.getBatteryCharge() - MagicNumbers.IMPROVE_COST);
+                    }
+                    outputNode.put("timestamp", command.getTimestamp());
                     break;
-
                 case "getEnergyStatus":
-                    if (!isSimStarted) {
-                        outputNode.put("message",
-                                       "ERROR: Simulation not started. Cannot perform action");
-                        outputNode.put("timestamp", command.getTimestamp());
-                    } else {
-                        outputNode.put("message", "TerraBot has " + terraBot.getBatteryCharge()
-                                + " energy points left.");
-                        outputNode.put("timestamp", command.getTimestamp());
-                    }
+                    outputNode.put("message", "TerraBot has " + terraBot.getBatteryCharge()
+                            + " energy points left.");
+                    outputNode.put("timestamp", command.getTimestamp());
                     break;
-
                 default:
                     break;
             }
@@ -414,7 +335,8 @@ class WorldManager {
 
         return result;
     }
-/// Functia de update a vremii / interactiunea sa cu mediul
+
+    /// Functia de update a vremii / interactiunea sa cu mediul
     private void updateWeather() {
         final MapBox[][] mapBox = map.getEnvMap();
         for (int j = 0; j < map.getWidth(); j++) {

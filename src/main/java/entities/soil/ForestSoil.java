@@ -13,9 +13,6 @@ public final class ForestSoil extends Soil {
     private double soilQualityScore;
 
     @Override
-/**
- * Javadoc for method setSoilQualityScore.
- */
     public void setSoilQualityScore() {
         soilQualityScore =
                 (getNitrogen() * ONE_POINT_TWO) + (getOrganicMatter() * 2)
@@ -35,37 +32,21 @@ public final class ForestSoil extends Soil {
         }
     }
 
-//    public double getSoilQuality() {
-//        return soilQuality;
-//    }
-
     @Override
-/**
- * Javadoc for method posibilityToGetStuck.
- */
     public double posibilityToGetStuck() {
         return ((getWaterRetention() * MagicNumbers.POINT_SIX
                 + leafLitter * MagicNumbers.POINT_FOUR) / EIGHTY) * ONE_HUNDRED_INT;
     }
 
     @Override
-/**
- * Javadoc for method getSoilQualityScore.
- */
     public double getSoilQualityScore() {
         return soilQualityScore;
     }
 
-    /**
-     * Javadoc for method getLeafLitter.
-     */
     public double getLeafLitter() {
         return leafLitter;
     }
 
-    /**
-     * Javadoc for method setLeafLitter.
-     */
     public void setLeafLitter(final double leafLitter) {
         this.leafLitter = leafLitter;
     }

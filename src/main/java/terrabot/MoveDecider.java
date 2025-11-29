@@ -85,6 +85,8 @@ public final class MoveDecider {
 
     /**
      * Javadoc for method CalculateTotalRisk.
+     * calculeaza riscul totatl al unei patratici si il intoarce robotului pentru a
+     * alege urmatoarea miscare.
      */
     public int calculateTotalRisk(final MapBox box) {
         int count = 0;
@@ -98,10 +100,6 @@ public final class MoveDecider {
 
         final double mean = Math.abs(totalRisk / count);
         final int fn = (int) Math.round(mean);
-//        IO.println("COUNT " + count + " TOTAL = " + fn + " AIR : " + possibilityToGetDamagedByAir
-//                           + " SOIL " + possibilityToGetStuckInSoil + " ANIMAL "
-//                           + possibilityToBeAttackedByAnimal + " PLANTS "
-//                           + possibiltyToGetStuckInPlants);
         return fn;
     }
 

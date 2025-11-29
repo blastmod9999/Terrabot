@@ -9,12 +9,10 @@ import static utils.MagicNumbers.ONE_HUNDRED_INT;
 public final class Ferns extends Plants {
 
 
-/**
- * Javadoc for method UpdateBox.
- */
     @Override
     public void updateBox(final Air air) {
         final double o2 = 0;
+
 
         setGrowth(getGrowth() + MagicNumbers.POINT_TWO);
         double bonus = MagicNumbers.POINT_TWO;

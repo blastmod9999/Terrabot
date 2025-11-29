@@ -1,5 +1,6 @@
 package entities.soil;
 
+import lombok.Setter;
 import utils.MagicNumbers;
 
 import static utils.MagicNumbers.ONE_HUNDRED_INT;
@@ -8,13 +9,11 @@ import static utils.MagicNumbers.ONE_HUNDRED_DOUBLE;
 import static utils.MagicNumbers.FIFTY;
 
 public final class TundraSoil extends Soil {
+    @Setter
     private double permafrostDepth; //TundraSoil
     private double soilQualityScore;
 
     @Override
-/**
- * Javadoc for method setSoilQualityScore.
- */
     public void setSoilQualityScore() {
         soilQualityScore = (getNitrogen() * MagicNumbers.POINT_SEVEN) + (getOrganicMatter()
                 * MagicNumbers.POINT_FIVE) - (permafrostDepth * ONE_POINT_FIVE);
@@ -33,24 +32,12 @@ public final class TundraSoil extends Soil {
     }
 
     @Override
-/**
- * Javadoc for method posibilityToGetStuck.
- */
     public double posibilityToGetStuck() {
         return ((FIFTY - permafrostDepth) / FIFTY) * ONE_HUNDRED_INT;
     }
 
-    /**
-     * Javadoc for method getPermafrostDepth.
-     */
     public double getPermafrostDepth() {
         return permafrostDepth;
     }
 
-    /**
-     * Javadoc for method setPermafrostDepth.
-     */
-    public void setPermafrostDepth(final double permafrostDepth) {
-        this.permafrostDepth = permafrostDepth;
-    }
 }

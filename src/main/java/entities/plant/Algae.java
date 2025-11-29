@@ -8,10 +8,6 @@ import static utils.MagicNumbers.ONE_HUNDRED_INT;
 
 public final class Algae extends Plants {
 
-
-/**
- * Javadoc for method UpdateBox.
- */
     @Override
     public void updateBox(final Air air) {
         final double o2 = MagicNumbers.POINT_FIVE;

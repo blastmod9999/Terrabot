@@ -39,6 +39,9 @@ public class Animals extends Entities {
 
     /**
      * Javadoc for method AnimalMove.
+     * animalMove metoda publica apelata la update pentru ca un
+     * animal sa se miste o data la 2 iteratii ,apeleaza animalMoveDecider
+     * descris in README
      */
     public void animalMove(final InitializeMap map, final int x, final int y) {
         iteration++;
@@ -47,7 +50,14 @@ public class Animals extends Entities {
         }
 
     }
-
+    /**
+     * Javadoc for method animalMoveDecider.
+     * comuna pentru toate animalele care nu sunt
+     * Carnivore , si se foloseste de 3 ArrayList in care se stocheaza vecinii si dupa aceea
+     * li se calculeaza un scor
+     * de la 1-3 in functie de ce contin si calitatea apei (Aceasta metoda este override de fiecare
+     * subclasa daca face ceva in plus)
+     */
     void animalMoveDecider(final InitializeMap map, final int x, final int y) {
         final MapBox[][] mapBox = map.getEnvMap();
 

@@ -8,6 +8,9 @@ import java.util.LinkedHashMap;
 public class LearnFact {
     /**
      * Javadoc for method AddFactToDatabase.
+     * Se foloseste de un HashMap pentru a retine invataturile
+     * dar verifica mai intai daca acel obiect exista in inventar
+     * adica daca a fost scanat de terrabot.
      */
     public String addFactToDatabase(final String fact, final String entity,
                                     final LinkedHashMap<String, String> learnMap,

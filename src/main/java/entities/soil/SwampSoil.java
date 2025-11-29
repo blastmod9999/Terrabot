@@ -15,9 +15,6 @@ public final class SwampSoil extends Soil {
     private double soilQualityScore;
 
     @Override
-/**
- * Javadoc for method setSoilQualityScore.
- */
     public void setSoilQualityScore() {
         soilQualityScore =
                 (getNitrogen() * ONE_POINT_ONE) + (getOrganicMatter() * TWO_POINT_TWO)
@@ -36,36 +33,20 @@ public final class SwampSoil extends Soil {
         }
     }
 
-//    public double getSoilQuality() {
-//        return soilQuality;
-//    }
-
     @Override
-/**
- * Javadoc for method posibilityToGetStuck.
- */
     public double posibilityToGetStuck() {
         return waterLogging * TEN;
     }
 
     @Override
-/**
- * Javadoc for method getSoilQualityScore.
- */
     public double getSoilQualityScore() {
         return soilQualityScore;
     }
 
-    /**
-     * Javadoc for method getWaterLogging.
-     */
     public double getWaterLogging() {
         return waterLogging;
     }
 
-    /**
-     * Javadoc for method setWaterLogging.
-     */
     public void setWaterLogging(final double waterLogging) {
         this.waterLogging = waterLogging;
     }

@@ -10,10 +10,6 @@ import static utils.MagicNumbers.SIX_POINT_ZERO;
 
 public final class FloweringPlants extends Plants {
 
-
-/**
- * Javadoc for method UpdateBox.
- */
     @Override
     public void updateBox(final Air air) {
 

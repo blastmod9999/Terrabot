@@ -15,8 +15,6 @@ public class TerritorySectionParams {
     private ArrayList<Water> water;
     private ArrayList<Air> air;
 
-    //test push pc buc
-
     /**
      * Javadoc for method getSoil.
      */

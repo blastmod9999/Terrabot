@@ -8,9 +8,7 @@ import static utils.MagicNumbers.ZERO_POINT_TWO;
 import static utils.MagicNumbers.ONE_HUNDRED_DOUBLE;
 
 public final class Mosses extends Plants {
-    /**
-     * Javadoc for method UpdateBox.
-     */
+
     @Override
     public void updateBox(final Air air) {
         final double o2 = MagicNumbers.POINT_EIGHT;

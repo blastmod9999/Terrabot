@@ -15,9 +15,6 @@ public final class GrasslandSoil extends Soil {
     private double soilQualityScore;
 
     @Override
-/**
- * Javadoc for method setSoilQualityScore.
- */
     public void setSoilQualityScore() {
         soilQualityScore = (getNitrogen() * ONE_POINT_THREE) + (getOrganicMatter()
                 * ONE_POINT_FIVE) + (rootDensity
@@ -37,32 +34,22 @@ public final class GrasslandSoil extends Soil {
     }
 
     @Override
-/**
- * Javadoc for method posibilityToGetStuck.
- */
     public double posibilityToGetStuck() {
         return (((FIFTY - rootDensity) + getWaterRetention()
                 * MagicNumbers.POINT_FIVE) / SEVENTY_FIVE) * ONE_HUNDRED_INT;
     }
 
     @Override
-/**
- * Javadoc for method getSoilQualityScore.
- */
     public double getSoilQualityScore() {
         return soilQualityScore;
     }
 
-    /**
-     * Javadoc for method getRootDensity.
-     */
+
     public double getRootDensity() {
         return rootDensity;
     }
 
-    /**
-     * Javadoc for method setRootDensity.
-     */
+
     public void setRootDensity(final float rootDensity) {
         this.rootDensity = rootDensity;
     }

@@ -7,6 +7,8 @@ import entities.Entities;
 import entities.air.Air;
 import entities.plant.Plants;
 import entities.soil.Soil;
+import lombok.Getter;
+import lombok.Setter;
 import map.MapBox;
 import utils.MagicNumbers;
 
@@ -18,18 +20,60 @@ import static utils.MagicNumbers.ONE_HUNDRED_DOUBLE;
 
 public class Water extends Entities {
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    /**
+     * -- SETTER --
+     *  Javadoc for method setPurity.
+     * -- GETTER --
+     *  Javadoc for method getPurity.
+
+     */
+    @Getter
+    @Setter
     private float purity;
+    /**
+     * -- SETTER --
+     *  Javadoc for method setSalinity.
+     * -- GETTER --
+     *  Javadoc for method getSalinity.
+
+     */
+    @Getter
+    @Setter
     private float salinity;
+    /**
+     * -- SETTER --
+     *  Javadoc for method setTurbidity.
+     * -- GETTER --
+     *  Javadoc for method getTurbidity.
+
+     */
+    @Getter
+    @Setter
     private float turbidity;
+    /**
+     * -- SETTER --
+     *  Javadoc for method setContaminantIndex.
+     * -- GETTER --
+     *  Javadoc for method getContaminantIndex.
+
+     */
+    @Getter
+    @Setter
     private float contaminantIndex;
     private float pH;
     private boolean isFrozen;
+    /**
+     * -- GETTER --
+     *  Javadoc for method getWater_quality.
+     */
+    @Getter
     private double waterQuality;
     @JsonIgnore
     private int iterationUpdates;
 
     /**
      * Javadoc for method setWater_quality.
+     * setarile campurilor din enunt.
      */
     public void setWaterQuality() {
         final double purityScore = purity / ONE_HUNDRED_INT;
@@ -61,6 +105,9 @@ public class Water extends Entities {
 
     /**
      * Javadoc for method UpdateBox.
+     * aplica beneficiile apei asupra pamantului , a plantelor, a aerului
+     * acestea tin timp de 2 iteratii.
+     *
      */
     public void updateBox(final MapBox box) {
 
@@ -89,69 +136,6 @@ public class Water extends Entities {
             plant.setGrowth(updated);
         }
 
-    }
-
-    /**
-     * Javadoc for method getWater_quality.
-     */
-    public double getWaterQuality() {
-        return waterQuality;
-    }
-
-    /**
-     * Javadoc for method getPurity.
-     */
-    public float getPurity() {
-        return purity;
-    }
-
-    /**
-     * Javadoc for method setPurity.
-     */
-    public void setPurity(final float purity) {
-        this.purity = purity;
-    }
-
-    /**
-     * Javadoc for method getSalinity.
-     */
-    public float getSalinity() {
-        return salinity;
-    }
-
-    /**
-     * Javadoc for method setSalinity.
-     */
-    public void setSalinity(final float salinity) {
-        this.salinity = salinity;
-    }
-
-    /**
-     * Javadoc for method getTurbidity.
-     */
-    public float getTurbidity() {
-        return turbidity;
-    }
-
-    /**
-     * Javadoc for method setTurbidity.
-     */
-    public void setTurbidity(final float turbidity) {
-        this.turbidity = turbidity;
-    }
-
-    /**
-     * Javadoc for method getContaminantIndex.
-     */
-    public float getContaminantIndex() {
-        return contaminantIndex;
-    }
-
-    /**
-     * Javadoc for method setContaminantIndex.
-     */
-    public void setContaminantIndex(final float contaminantIndex) {
-        this.contaminantIndex = contaminantIndex;
     }
 
     /**

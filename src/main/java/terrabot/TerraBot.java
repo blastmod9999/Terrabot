@@ -106,12 +106,13 @@ public final class TerraBot {
 
     public TerraBot(final int batteryCharge) {
         this.batteryCharge = batteryCharge;
-        IO.println("Battery Charge: " + batteryCharge);
     }
 
 
     /**
      * Javadoc for method moveRobot.
+     * metoda care se ocupa de miscarea robotului pe harta , calculeaza riscul si scade
+     * din baterie costul miscarii.
      */
     public String moveRobot(final InitializeMap map) {
         final MapBox[][] mapBox = map.getEnvMap();
@@ -123,19 +124,15 @@ public final class TerraBot {
             final int newJ = y + dy[i];
             if (newI >= 0 && newJ >= 0 && newI < map.getHeight() && newJ < map.getWidth()) {
                 final int risk = moveDecider.calculateTotalRisk(mapBox[newI][newJ]);
-                IO.println("Risk la (x,y) :" + newI + " , " + newJ + " = " + risk);
-                //IO.println("COST = = = : "+risk);
                 if (risk < minimal) {
                     minimal = risk;
                     newX = newI;
                     newY = newJ;
-                    //IO.println("AM GASIT : " + new_x + " " + new_y);
                     found++;
                 }
             }
         }
         if (found != 0) {
-            IO.println("X = " + newX + ", Y = " + newY + " Cost : " + minimal);
             final int cost = minimal;
             if (batteryCharge >= cost) {
                 this.x = newX;
@@ -144,7 +141,6 @@ public final class TerraBot {
                 outputMessage =
                         "The robot has successfully moved to position (" + newX + ", "
                                 + newY + ").";
-                //IO.println("AM GASIT : " + newX + " " + newY);
             } else {
                 outputMessage = "ERROR: Not enough battery left. Cannot perform action";
             }
@@ -154,6 +150,9 @@ public final class TerraBot {
 
     /**
      * Javadoc for method scanObject.
+     * Metoda care se ocupa cu scanarea obiectelor si adaugarea lor in Inventar
+     * Dupa scanare, animalele devin active / plantele si vor incepe sa avanseze
+     * sau sa produca.
      */
     public String scanObject(final InitializeMap map, final String color,
                              final String smell, final String sound) {
@@ -196,6 +195,10 @@ public final class TerraBot {
 
     /**
      * Javadoc for method PrintKnowledge.
+     * Ne folosim de LinkedHashMap pentru a pastra ordinea exacta
+     * a introduceii in Map , apoi se scot din Hashmap ul original , learn fact
+     * si il adaugam in altul temporar pentru parsare exacta (conteaza ordinea) functia
+     * intoarce apoi arrayNode ul format si gata de adaugat in output. Referinte in README
      */
     public ArrayNode printKnowledge() {
         final ArrayNode out = MAPPER.createArrayNode();
@@ -238,6 +241,12 @@ public final class TerraBot {
 
     /**
      * Javadoc for method improvementType.
+     * In functie de comanda , se cauta exact in inventar mai intai
+     * sa vedem daca avem acel obiect iar mai apoi se verifica daca
+     * stim adica daca am invatat acel lucru .Daca nu e in inventar
+     * se intoarce un tip de eroare daca nu este invatat , se intoarce
+     * altul .Apoi se trece la executia finala cu un case care se ocupa de
+     * cele 4 tipuri.
      */
     public String improvementType(final Commands command, final InitializeMap map) {
         final MapBox[][] mapBox = map.getEnvMap();
@@ -256,7 +265,6 @@ public final class TerraBot {
             }
         }
 
-        //IO.println("TYPE : " + command.getImprovementType() + "  NAME : " + command.getName());
 
         if (itemInInventory == null) {
             return "ERROR 1";
@@ -266,7 +274,7 @@ public final class TerraBot {
             requiredFact = "Method to plant " + command.getName();
         } else if ("fertilizeSoil".equals(command.getImprovementType())) {
             requiredFact = "Method to fertilize with "
-                    + command.getName(); // Verifică formatul exact!
+                    + command.getName();
 
         } else if ("increaseHumidity".equals(command.getImprovementType())) {
             requiredFact = "Method to increase humidity.";
@@ -274,8 +282,6 @@ public final class TerraBot {
             requiredFact = "Method to increase moisture.";
         }
 
-        //IO.println("required fact : " + requiredFact);
-        //IO.println(learnMap.toString());
 
         if (!learnMap.containsKey(requiredFact)) {
             return "ERROR 2";
@@ -290,12 +296,10 @@ public final class TerraBot {
                 object = scanInventory(type, name);
                 if (object != null) {
                     //mapBox[x][y].setPlant((Plants)object);
-
                     final Air air = mapBox[x][y].getAir();
                     air.setOxygenLevel(air.getOxygenLevel() + MagicNumbers.POINT_THREE);
                     //air.updateAirQualityScore(air.getOxygenLevel());
                     removeFromInventory(object);
-                    //mapBox[object.getX()][object.getY()].setPlant(null);
                     return "The " + name + " was planted successfully.";
                 }
             }
@@ -305,8 +309,6 @@ public final class TerraBot {
 
                 object = scanInventory(type, name);
                 if (object != null) {
-                    //mapBox[x][y].setAnimal((Animals)object);
-
                     final Soil soil = mapBox[x][y].getSoil();
                     soil.setOrganicMatter(soil.getOrganicMatter() + MagicNumbers.POINT_THREE);
                     //soil.updateAirQualityScore(soil.getOxygenLevel());
@@ -320,11 +322,8 @@ public final class TerraBot {
                 name = command.getName();
                 object = scanInventory(type, name);
                 if (object != null) {
-                    //mapBox[x][y].setPlant((Plants)object);
-
                     final Air air = mapBox[x][y].getAir();
                     air.setHumidity(air.getHumidity() + MagicNumbers.POINT_TWO);
-                    air.updateAirQualityScore(air.getOxygenLevel());
                     removeFromInventory(object);
                     return "The humidity was successfully increased using " + name;
                 }
@@ -334,11 +333,8 @@ public final class TerraBot {
                 name = command.getName();
                 object = scanInventory(type, name);
                 if (object != null) {
-                    //mapBox[x][y].setPlant((Plants)object);
-
                     final Soil soil = mapBox[x][y].getSoil();
                     soil.setWaterRetention(soil.getWaterRetention() + MagicNumbers.POINT_TWO);
-                    //soil.updateAirQualityScore(soil.getOxygenLevel());
                     removeFromInventory(object);
                     return "The moisture was successfully increased using " + name;
                 }
@@ -359,7 +355,6 @@ public final class TerraBot {
         Entities object = null;
 
         for (final Entities entity : inventory) {
-            //IO.println("TYPE : " + entity.getType() + " NAME : " + entity.getName());
             if (entity.getType().equals(type) && entity.getName().equals(name)) {
                 object = entity;
             }

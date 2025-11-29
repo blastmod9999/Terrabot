@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import entities.Entities;
+import lombok.Setter;
 import simulation.Commands;
 import utils.MagicNumbers;
 
@@ -29,8 +30,14 @@ import static utils.MagicNumbers.ONE_HUNDRED_INT;
 public abstract class Air extends Entities {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    @Setter
     private double humidity = 0;
+
+    @Setter
     private double temperature = 0;
+
+    @Setter
     private double oxygenLevel;
     private String airQuality;
 
@@ -52,56 +59,37 @@ public abstract class Air extends Entities {
     }
 
     /**
-     * Javadoc for method ApplyWeatherConditions.
+     * Javadoc for method applyWeatherConditions.
+     * Metoda principal apelata de update , aplica efectiv
+     * modificarile asupra aerului si al box ului;
      */
     public boolean applyWeatherConditions(final Commands command) {
         return false;
     }
-
     /**
      * Javadoc for method getHumidity.
+     * Aceasta metoda intoarce umiditatea
      */
     public double getHumidity() {
         return humidity;
     }
-
-    /**
-     * Javadoc for method setHumidity.
-     */
-    public void setHumidity(final double humidity) {
-        this.humidity = humidity;
-    }
-
     /**
      * Javadoc for method getTemperature.
+     * Aceasta metoda intoarce temperatura
      */
     public double getTemperature() {
         return temperature;
     }
-
-    /**
-     * Javadoc for method setTemperature.
-     */
-    public void setTemperature(final double temperature) {
-        this.temperature = temperature;
-    }
-
     /**
      * Javadoc for method getOxygenLevel.
+     * Aceasta metoda intoarce nivelul de oxigen
      */
     public double getOxygenLevel() {
         return oxygenLevel;
     }
-
-    /**
-     * Javadoc for method setOxygenLevel.
-     */
-    public void setOxygenLevel(final double oxygenLevel) {
-        this.oxygenLevel = oxygenLevel;
-    }
-
     /**
      * Javadoc for method getAirQuality.
+     * Aceasta metoda rotunjeste si seteaza toxicitatea
      */
     public String getAirQuality() {
         return airQuality;
@@ -109,6 +97,8 @@ public abstract class Air extends Entities {
 
     /**
      * Javadoc for method setAirQuality.
+     * Metoda apelata de fiecare subclasa pentru a seta
+     * calitatea aerului (folosita la print)
      */
     public void setAirQuality(final double airQualityScore) {
         if (airQualityScore >= MagicNumbers.GOOD) {
@@ -122,6 +112,8 @@ public abstract class Air extends Entities {
 
     /**
      * Javadoc for method getAirQualityScore.
+     * Metoda publica folosita pentru a intoarce socrul
+     * este individuala , override de alte subclase
      */
     public double getAirQualityScore() {
         return 0;
@@ -129,6 +121,7 @@ public abstract class Air extends Entities {
 
     /**
      * Javadoc for method setAirToxicity.
+     * Aceasta metoda rotunjeste si seteaza toxicitatea
      */
     public void setAirToxicity(final double airQualityScore, final int maxScore) {
         final double toxicityAQ = ONE_HUNDRED_INT * (1 - airQualityScore / maxScore);
@@ -137,28 +130,27 @@ public abstract class Air extends Entities {
         finalResult = Math.round(normalizeScore * ONE_HUNDRED_DOUBLE) / ONE_HUNDRED_DOUBLE;
         this.airToxicity = finalResult;
     }
-
     /**
      * Javadoc for method getAirToxicity.
+     * Aceasta metoda intoarce toxicitatea aerului
      */
     public double getAirToxicity() {
         return airToxicity;
     }
 
-    /**
-     * Javadoc for method updateAirQualityScore.
-     */
-    public void updateAirQualityScore(final double score) {
-    }
 
     /**
      * Javadoc for method setAirQualityScore.
+     * Una dintre cele mai importante metode , individuala pentru fiecare
+     * subclasa @override calculeaza scorul in functie de formulele date
+     * si de parametrii specifici fiecarui tip de aer.
      */
     public void setAirQualityScore() {
     }
 
     /**
      * Javadoc for method resetWeather.
+     * fiecare subclasa se reseteaza singura dupa 2 iteratii.
      */
     public void resetWeather() {
     }

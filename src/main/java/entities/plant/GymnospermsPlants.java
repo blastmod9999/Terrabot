@@ -7,9 +7,7 @@ import static utils.MagicNumbers.ONE_HUNDRED_DOUBLE;
 import static utils.MagicNumbers.ONE_HUNDRED_INT;
 
 public final class GymnospermsPlants extends Plants {
-    /**
-     * Javadoc for method UpdateBox.
-     */
+
     @Override
     public void updateBox(final Air air) {
         final double o2 = 0;

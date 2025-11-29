@@ -40,6 +40,7 @@ public class Plants extends Entities {
 
     /**
      * Javadoc for method getGrowth.
+     * intoarce cresterea plantei
      */
     public double getGrowth() {
         return growth;
@@ -47,6 +48,7 @@ public class Plants extends Entities {
 
     /**
      * Javadoc for method setGrowth.
+     * seteaza cresterea (de ex planta moarta = 0)
      */
     public void setGrowth(final double growth) {
         this.growth = growth;
@@ -54,6 +56,8 @@ public class Plants extends Entities {
 
     /**
      * Javadoc for method UpdateBox.
+     * Specifica fiecarei plante, se foloseste de parametrii individuali ai acesteia
+     * pentru a actualiza aerul in functie de cresterea plantelor.
      */
     public void updateBox(final Air air) {
 

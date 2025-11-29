@@ -17,11 +17,18 @@ public abstract class Entities {
     //pt remove after plant
     private int x;
     private int y;
-
+    /**
+     * Javadoc for method isScanned.
+     * ne ajuta sa verificam daca este un obiect scanat
+     * comun pt toate elementele.
+     */
     public boolean isScanned() {
         return scanned;
     }
-
+    /**
+     * Javadoc for method getX.
+     * setam obiectul ca scanat.
+     */
     public void setScanned(final boolean scanned) {
         this.scanned = scanned;
     }

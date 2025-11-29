@@ -1,5 +1,7 @@
 package entities.air;
 
+import lombok.Getter;
+import lombok.Setter;
 import simulation.Commands;
 import utils.MagicNumbers;
 
@@ -9,25 +11,20 @@ import static utils.MagicNumbers.MAX_POLAR;
 import static utils.MagicNumbers.ZERO_POINT_ZERO_FIVE;
 
 public final class PolarAir extends Air {
+
+    @Setter
+    @Getter
     private double iceCrystalConcentration; //polar
     private double airQualityScore;
     private double windSpeed;
 
 
-
-/**
- * Javadoc for method resetWeather.
- */
     @Override
     public void resetWeather() {
         this.windSpeed = 0;
         setAirQualityScore();
     }
 
-
-/**
- * Javadoc for method ApplyWeatherConditions.
- */
     @Override
     public boolean applyWeatherConditions(final Commands command) {
         if (command.getType().equals("polarStorm")) {
@@ -39,10 +36,6 @@ public final class PolarAir extends Air {
     }
 
 
-
-/**
- * Javadoc for method setAirQualityScore.
- */
     @Override
     public void setAirQualityScore() {
         airQualityScore =
@@ -60,26 +53,9 @@ public final class PolarAir extends Air {
         setAirToxicity(airQualityScore, MAX_POLAR);
     }
 
-
-/**
- * Javadoc for method getAirQualityScore.
- */
     @Override
     public double getAirQualityScore() {
         return airQualityScore;
     }
 
-    /**
-     * Javadoc for method getIceCrystalConcentration.
-     */
-    public double getIceCrystalConcentration() {
-        return iceCrystalConcentration;
-    }
-
-    /**
-     * Javadoc for method setIceCrystalConcentration.
-     */
-    public void setIceCrystalConcentration(final double iceCrystalConcentration) {
-        this.iceCrystalConcentration = iceCrystalConcentration;
-    }
 }
