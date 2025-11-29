@@ -11,36 +11,36 @@ public class TestCaseWatcher implements TestWatcher {
     public static int totalPoints = 0;
 
     @Override
-    public void testSuccessful(ExtensionContext context) {
+    public void testSuccessful(final ExtensionContext context) {
         try {
-            TestCaseData testCaseData = getTestCaseData(context);
+            final TestCaseData testCaseData = getTestCaseData(context);
             stringBuilder.append("CASE - %s - %s/%s = PASSED\n".formatted(testCaseData.testName(), testCaseData.points(), testCaseData.points()));
             totalPoints += testCaseData.points();
         }
-        catch (IllegalArgumentException e) {
+        catch (final IllegalArgumentException e) {
             // Do nothing
         }
     }
 
     @Override
-    public void testFailed(ExtensionContext context, Throwable cause) {
+    public void testFailed(final ExtensionContext context, final Throwable cause) {
         try {
-            TestCaseData testCaseData = getTestCaseData(context);
+            final TestCaseData testCaseData = getTestCaseData(context);
             stringBuilder.append("CASE - %s - 0/%s = FAILED\n".formatted(testCaseData.testName(), testCaseData.points()));
         }
-        catch (IllegalArgumentException e) {
+        catch (final IllegalArgumentException e) {
             // Do nothing
         }
     }
 
-    private TestCaseData getTestCaseData(ExtensionContext context) {
-        String[] testCaseSplit = context.getDisplayName().split(",");
+    private TestCaseData getTestCaseData(final ExtensionContext context) {
+        final String[] testCaseSplit = context.getDisplayName().split(",");
 
         if (testCaseSplit.length != 5) {
             throw new IllegalArgumentException();
         }
 
-        String[] data = Arrays.stream(testCaseSplit)
+        final String[] data = Arrays.stream(testCaseSplit)
                 .map(String::strip)
                 .toArray(String[]::new);
 

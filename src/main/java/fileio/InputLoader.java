@@ -21,8 +21,8 @@ public final class InputLoader {
     private final ArrayList<CommandInput> commands;
 
     public InputLoader(final String filePath) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        InputRoot root = mapper.readValue(new File(filePath), InputRoot.class);
+        final ObjectMapper mapper = new ObjectMapper();
+        final InputRoot root = mapper.readValue(new File(filePath), InputRoot.class);
         this.simulations = new ArrayList<>(root.simulationParams);
         this.commands = new ArrayList<>(root.commands);
     }

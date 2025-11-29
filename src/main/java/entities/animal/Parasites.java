@@ -1,4 +1,4 @@
 package entities.animal;
 
-public class Parasites extends Animals{
+public final class Parasites extends Animals {
 }

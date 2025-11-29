@@ -6,10 +6,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import entities.Entities;
-import entities.plant.Plants;
 import simulation.Commands;
+import utils.MagicNumbers;
 
-//import main.Commands;
+import static utils.MagicNumbers.ONE_HUNDRED_DOUBLE;
+import static utils.MagicNumbers.ONE_HUNDRED_INT;
 
 
 @JsonTypeInfo(
@@ -27,104 +28,139 @@ import simulation.Commands;
 })
 public abstract class Air extends Entities {
 
-    public enum AirType {
-        PolarAir,
-        TemperateAir,
-        TropicalAir,
-        MountainAir,
-        DesertAir
-    }
-    protected AirType type;
-    private double humidity;
-    private double temperature;
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private double humidity = 0;
+    private double temperature = 0;
     private double oxygenLevel;
     private String airQuality;
 
     @JsonIgnore
     private double airToxicity;
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
-    //Facem deepcopy nu Shallow
-    // + try catch generat de IDE
-    // Source - https://stackoverflow.com/questions/49903859/deep-copy-using-jackson-string-or-jsonnode
-// Posted by Rad, modified by community. See post 'Timeline' for change history
-// Retrieved 2025-11-27, License - CC BY-SA 3.0
-
-    //MyPojo myPojo = new MyPojo();
-    //ObjectMapper mapper = new ObjectMapper();
-    //MyPojo newPojo = mapper.treeToValue(mapper.valueToTree(myPojo), MyPojo.class);
-
+    /**
+     * Javadoc for method copy.
+     * Se face deepCopy , nu facem Shallow pt ca altfel nu merge
+     * referinte : https://stackoverflow.com/questions/49903859/
+     * deep-copy-using-jackson-string-or-jsonnode
+     */
     public Air copy() {
         try {
             return MAPPER.treeToValue(MAPPER.valueToTree(this), Air.class);
-        } catch (JsonProcessingException e) {
+        } catch (final JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-
-    public boolean ApplyWeatherConditions(Commands command) {
+    /**
+     * Javadoc for method ApplyWeatherConditions.
+     */
+    public boolean applyWeatherConditions(final Commands command) {
         return false;
     }
 
-
+    /**
+     * Javadoc for method getHumidity.
+     */
     public double getHumidity() {
         return humidity;
     }
 
-    public void setHumidity(double humidity) {
+    /**
+     * Javadoc for method setHumidity.
+     */
+    public void setHumidity(final double humidity) {
         this.humidity = humidity;
     }
 
+    /**
+     * Javadoc for method getTemperature.
+     */
     public double getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(double temperature) {
+    /**
+     * Javadoc for method setTemperature.
+     */
+    public void setTemperature(final double temperature) {
         this.temperature = temperature;
     }
 
+    /**
+     * Javadoc for method getOxygenLevel.
+     */
     public double getOxygenLevel() {
         return oxygenLevel;
     }
 
-    public void setOxygenLevel(double oxygenLevel) {
+    /**
+     * Javadoc for method setOxygenLevel.
+     */
+    public void setOxygenLevel(final double oxygenLevel) {
         this.oxygenLevel = oxygenLevel;
     }
 
+    /**
+     * Javadoc for method getAirQuality.
+     */
     public String getAirQuality() {
         return airQuality;
     }
 
-    public double getAirQualityScore() { return 0; }
-
-    public void setAirToxicity(double airQualityScore, int maxScore) {
-        double toxicityAQ = 100 * (1 - airQualityScore / maxScore);
-        double finalResult = Math.round(toxicityAQ * 100.0) / 100.0;
-        double normalizeScore = Math.max(0, Math.min(100, finalResult));
-        finalResult = Math.round(normalizeScore * 100.0) / 100.0;
-        this.airToxicity = finalResult;
-    }
-
-    public double getAirToxicity() {
-        return airToxicity;
-    }
-
-    public void setAirQuality(double airQualityScore) {
-        if(airQualityScore >= 70)
+    /**
+     * Javadoc for method setAirQuality.
+     */
+    public void setAirQuality(final double airQualityScore) {
+        if (airQualityScore >= MagicNumbers.GOOD) {
             airQuality = "good";
-        else if (airQualityScore >= 40) {
+        } else if (airQualityScore >= MagicNumbers.MODERATE) {
             airQuality = "moderate";
         } else {
             airQuality = "poor";
         }
     }
 
-    public void updateAirQualityScore(double score) {}
+    /**
+     * Javadoc for method getAirQualityScore.
+     */
+    public double getAirQualityScore() {
+        return 0;
+    }
 
-    public void setAirQualityScore() {}
+    /**
+     * Javadoc for method setAirToxicity.
+     */
+    public void setAirToxicity(final double airQualityScore, final int maxScore) {
+        final double toxicityAQ = ONE_HUNDRED_INT * (1 - airQualityScore / maxScore);
+        double finalResult = Math.round(toxicityAQ * ONE_HUNDRED_DOUBLE) / ONE_HUNDRED_DOUBLE;
+        final double normalizeScore = Math.max(0, Math.min(ONE_HUNDRED_INT, finalResult));
+        finalResult = Math.round(normalizeScore * ONE_HUNDRED_DOUBLE) / ONE_HUNDRED_DOUBLE;
+        this.airToxicity = finalResult;
+    }
 
+    /**
+     * Javadoc for method getAirToxicity.
+     */
+    public double getAirToxicity() {
+        return airToxicity;
+    }
+
+    /**
+     * Javadoc for method updateAirQualityScore.
+     */
+    public void updateAirQualityScore(final double score) {
+    }
+
+    /**
+     * Javadoc for method setAirQualityScore.
+     */
+    public void setAirQualityScore() {
+    }
+
+    /**
+     * Javadoc for method resetWeather.
+     */
     public void resetWeather() {
     }
+
 }

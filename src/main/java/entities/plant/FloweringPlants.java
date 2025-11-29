@@ -1,33 +1,41 @@
 package entities.plant;
 
 import entities.air.Air;
-import map.MapBox;
+import utils.MagicNumbers;
 
-public class FloweringPlants extends Plants {
+import static utils.MagicNumbers.ONE_HUNDRED_DOUBLE;
+import static utils.MagicNumbers.ONE_HUNDRED_INT;
+import static utils.MagicNumbers.SIX_POINT_ZERO;
 
+
+public final class FloweringPlants extends Plants {
+
+
+/**
+ * Javadoc for method UpdateBox.
+ */
     @Override
-    public void UpdateBox(Air air) {
+    public void updateBox(final Air air) {
 
-        growth += 0.2;
-        double bonus = 0.2;
+        setGrowth(getGrowth() + MagicNumbers.POINT_TWO);
+        double bonus = MagicNumbers.POINT_TWO;
 
-        growth = Math.round(growth * 100) / 100.0;
-        if (growth >= 1.0) {
-            bonus = 0.7;
+        setGrowth(Math.round(getGrowth() * ONE_HUNDRED_INT) / ONE_HUNDRED_DOUBLE);
+        if (getGrowth() >= 1.0) {
+            bonus = MagicNumbers.POINT_SEVEN;
         }
 
-        if(growth >= 2.0) {
-            bonus = 0.4;
+        if (getGrowth() >= 2.0) {
+            bonus = MagicNumbers.POINT_FOUR;
         }
 
-        if(growth >= 3.0) {
+        if (getGrowth() >= MagicNumbers.GROW_LIMIT) {
             return;
         }
-        double currentO2 = air.getOxygenLevel();
-        double updated = currentO2 + 6.0 + bonus;
+        final double currentO2 = air.getOxygenLevel();
+        double updated = currentO2 + SIX_POINT_ZERO + bonus;
 
-        updated = Math.round(updated * 100) / 100.0;
-
+        updated = Math.round(updated * ONE_HUNDRED_INT) / ONE_HUNDRED_DOUBLE;
 
 
         air.setOxygenLevel(updated);

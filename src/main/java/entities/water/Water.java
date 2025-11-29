@@ -8,141 +8,177 @@ import entities.air.Air;
 import entities.plant.Plants;
 import entities.soil.Soil;
 import map.MapBox;
+import utils.MagicNumbers;
 
 import static java.lang.Math.abs;
+import static utils.MagicNumbers.ONE_HUNDRED_INT;
+import static utils.MagicNumbers.ZERO_POINT_ONE_FIVE;
+import static utils.MagicNumbers.ONE_HUNDRED_DOUBLE;
+
 
 public class Water extends Entities {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     private float purity;
     private float salinity;
     private float turbidity;
     private float contaminantIndex;
     private float pH;
     private boolean isFrozen;
-    private double water_quality;
+    private double waterQuality;
     @JsonIgnore
     private int iterationUpdates;
 
-    public void setWater_quality()
-    {
-        double purity_score        = purity / 100;
-        double pH_score            = 1 - abs(pH - 7.5) / 7.5;
-        double salinity_score      = 1 - (salinity / 350);
-        double turbidity_score     = 1 - (turbidity / 100);
-        double contaminant_score   = 1 - (contaminantIndex / 100);
-        double frozen_score        = isFrozen ? 0 : 1;
+    /**
+     * Javadoc for method setWater_quality.
+     */
+    public void setWaterQuality() {
+        final double purityScore = purity / ONE_HUNDRED_INT;
+        final double pHScore = 1 - abs(pH - 7.5) / 7.5;
+        final double salinityScore = 1 - (salinity / 350);
+        final double turbidityScore = 1 - (turbidity / ONE_HUNDRED_INT);
+        final double contaminantScore = 1 - (contaminantIndex / ONE_HUNDRED_INT);
+        final double frozenScore = isFrozen ? 0 : 1;
 
-        this.water_quality = (0.3 * purity
-                + 0.2 * pH_score
-                + 0.15 * salinity_score
-                + 0.1 * turbidity_score
-                + 0.15 * contaminant_score
-                + 0.2 * frozen_score) * 100;
+        this.waterQuality = (MagicNumbers.POINT_THREE * purity
+                + MagicNumbers.POINT_TWO * pHScore
+                + ZERO_POINT_ONE_FIVE * salinityScore
+                + MagicNumbers.POINT_ONE * turbidityScore
+                + ZERO_POINT_ONE_FIVE * contaminantScore
+                + MagicNumbers.POINT_TWO * frozenScore) * ONE_HUNDRED_INT;
     }
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
-    //Facem deepcopy nu Shallow
-    // + try catch generat de IDE
-    // Source - https://stackoverflow.com/questions/49903859/deep-copy-using-jackson-string-or-jsonnode
-// Posted by Rad, modified by community. See post 'Timeline' for change history
-// Retrieved 2025-11-27, License - CC BY-SA 3.0
-
-    //MyPojo myPojo = new MyPojo();
-    //ObjectMapper mapper = new ObjectMapper();
-    //MyPojo newPojo = mapper.treeToValue(mapper.valueToTree(myPojo), MyPojo.class);
-
+    /**
+     * Javadoc for method copy.
+     * facem deepcopy referinta in air
+     */
     public Water copy() {
         try {
             return MAPPER.treeToValue(MAPPER.valueToTree(this), Water.class);
-        } catch (JsonProcessingException e) {
+        } catch (final JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void UpdateBox(MapBox box) {
-
+    /**
+     * Javadoc for method UpdateBox.
+     */
+    public void updateBox(final MapBox box) {
 
         //TIMP DE 2 ITERATII CRESTE SI FACE CE TREBUIE LA SOIL
         iterationUpdates++;
-        if(iterationUpdates % 2 == 0)
-        {
-            if(box.getSoil()!=null){
-                Soil soil = box.getSoil();
-                double updated = soil.getWaterRetention() + 0.1;
-                updated = Math.round(updated * 100) / 100.0;
+        if (iterationUpdates % 2 == 0) {
+            if (box.getSoil() != null) {
+                final Soil soil = box.getSoil();
+                double updated = soil.getWaterRetention() + MagicNumbers.POINT_ONE;
+                updated = Math.round(updated * ONE_HUNDRED_INT) / ONE_HUNDRED_DOUBLE;
                 soil.setWaterRetention(updated);
             }
-            if(box.getAir()!=null){
-                Air air = box.getAir();
-                double updated = air.getHumidity() + 0.1;
-                updated = Math.round(updated * 100) / 100.0;
+            if (box.getAir() != null) {
+                final Air air = box.getAir();
+                double updated = air.getHumidity() + MagicNumbers.POINT_ONE;
+                updated = Math.round(updated * ONE_HUNDRED_INT) / ONE_HUNDRED_DOUBLE;
                 air.setHumidity(updated);
             }
 
         }
 
-        if(box.getPlant()!=null) {
-            Plants plant = box.getPlant();
-            double updated = plant.getGrowth() + 0.2;
-            updated = Math.round(updated * 100) / 100.0;
+        if (box.getPlant() != null) {
+            final Plants plant = box.getPlant();
+            double updated = plant.getGrowth() + MagicNumbers.POINT_TWO;
+            updated = Math.round(updated * ONE_HUNDRED_INT) / ONE_HUNDRED_DOUBLE;
             plant.setGrowth(updated);
         }
 
     }
 
-    public double getWater_quality() {
-        return water_quality;
+    /**
+     * Javadoc for method getWater_quality.
+     */
+    public double getWaterQuality() {
+        return waterQuality;
     }
 
-    public void setMass(float mass) {
-        this.mass = mass;
-    }
-
+    /**
+     * Javadoc for method getPurity.
+     */
     public float getPurity() {
         return purity;
     }
 
-    public void setPurity(float purity) {
+    /**
+     * Javadoc for method setPurity.
+     */
+    public void setPurity(final float purity) {
         this.purity = purity;
     }
 
+    /**
+     * Javadoc for method getSalinity.
+     */
     public float getSalinity() {
         return salinity;
     }
 
-    public void setSalinity(float salinity) {
+    /**
+     * Javadoc for method setSalinity.
+     */
+    public void setSalinity(final float salinity) {
         this.salinity = salinity;
     }
 
+    /**
+     * Javadoc for method getTurbidity.
+     */
     public float getTurbidity() {
         return turbidity;
     }
 
-    public void setTurbidity(float turbidity) {
+    /**
+     * Javadoc for method setTurbidity.
+     */
+    public void setTurbidity(final float turbidity) {
         this.turbidity = turbidity;
     }
 
+    /**
+     * Javadoc for method getContaminantIndex.
+     */
     public float getContaminantIndex() {
         return contaminantIndex;
     }
 
-    public void setContaminantIndex(float contaminantIndex) {
+    /**
+     * Javadoc for method setContaminantIndex.
+     */
+    public void setContaminantIndex(final float contaminantIndex) {
         this.contaminantIndex = contaminantIndex;
     }
 
+    /**
+     * Javadoc for method getpH.
+     */
     public float getpH() {
         return pH;
     }
 
-    public void setpH(float pH) {
+    /**
+     * Javadoc for method setpH.
+     */
+    public void setpH(final float pH) {
         this.pH = pH;
     }
 
+    /**
+     * Javadoc for method getisFrozen.
+     */
     public boolean getisFrozen() {
         return isFrozen;
     }
 
-    public void setisFrozen(boolean isFrozen) {
+    /**
+     * Javadoc for method setisFrozen.
+     */
+    public void setisFrozen(final boolean isFrozen) {
         this.isFrozen = isFrozen;
     }
 }

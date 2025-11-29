@@ -1,15 +1,22 @@
 package entities.air;
 
 import simulation.Commands;
+import utils.MagicNumbers;
 
-public class MountainAir extends Air {
+import static utils.MagicNumbers.MAX_MOUNTAIN;
+
+public final class MountainAir extends Air {
     private double altitude; //montan
     private double airQualityScore;
     private int numberOfHikers;
 
+
+/**
+ * Javadoc for method ApplyWeatherConditions.
+ */
     @Override
-    public boolean ApplyWeatherConditions(Commands command) {
-        if(command.getType().equals("peopleHiking")) {
+    public boolean applyWeatherConditions(final Commands command) {
+        if (command.getType().equals("peopleHiking")) {
             this.numberOfHikers = command.getNumberOfHikers();
             setAirQualityScore();
             return true;
@@ -18,6 +25,10 @@ public class MountainAir extends Air {
         return false;
     }
 
+
+/**
+ * Javadoc for method resetWeather.
+ */
     @Override
     public void resetWeather() {
         this.numberOfHikers = 0;
@@ -25,31 +36,45 @@ public class MountainAir extends Air {
     }
 
 
+/**
+ * Javadoc for method setAirQualityScore.
+ */
     @Override
     public void setAirQualityScore() {
 
-        //IO.println(super.getOxygenLevel()+ "  " + super.getHumidity() +"\n" );
-        double oxygenFactor = getOxygenLevel() - ((altitude / 1000.0) * 0.5);
-        airQualityScore = (oxygenFactor * 2) + (getHumidity() * 0.6);
+        final double oxygenFactor =
+                getOxygenLevel() - ((altitude / 1000.0) * MagicNumbers.POINT_FIVE);
+        airQualityScore = (oxygenFactor * 2) + (getHumidity() * MagicNumbers.POINT_SIX);
 
-        if(numberOfHikers > 0){
-            airQualityScore = airQualityScore - (numberOfHikers * 0.1);
+        if (numberOfHikers > 0) {
+            airQualityScore = airQualityScore - (numberOfHikers * MagicNumbers.POINT_ONE);
         }
         setAirQuality(airQualityScore);
 
-        setAirToxicity(airQualityScore,78);
+        setAirToxicity(airQualityScore, MAX_MOUNTAIN);
 
     }
+
+
+/**
+ * Javadoc for method getAirQualityScore.
+ */
     @Override
     public double getAirQualityScore() {
         return airQualityScore;
     }
 
+    /**
+     * Javadoc for method getAltitude.
+     */
     public double getAltitude() {
         return altitude;
     }
 
-    public void setAltitude(double altitude) {
+    /**
+     * Javadoc for method setAltitude.
+     */
+    public void setAltitude(final double altitude) {
         this.altitude = altitude;
     }
 }

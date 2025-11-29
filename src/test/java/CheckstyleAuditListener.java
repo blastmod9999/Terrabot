@@ -5,23 +5,23 @@ public class CheckstyleAuditListener implements AuditListener {
     private final StringBuilder errors = new StringBuilder();
 
     @Override
-    public void auditStarted(AuditEvent auditEvent) {
+    public void auditStarted(final AuditEvent auditEvent) {
     }
 
     @Override
-    public void auditFinished(AuditEvent auditEvent) {
+    public void auditFinished(final AuditEvent auditEvent) {
     }
 
     @Override
-    public void fileStarted(AuditEvent auditEvent) {
+    public void fileStarted(final AuditEvent auditEvent) {
     }
 
     @Override
-    public void fileFinished(AuditEvent auditEvent) {
+    public void fileFinished(final AuditEvent auditEvent) {
     }
 
     @Override
-    public void addError(AuditEvent auditEvent) {
+    public void addError(final AuditEvent auditEvent) {
         errors.append(auditEvent.getFileName())
                 .append(":")
                 .append(auditEvent.getLine())
@@ -31,7 +31,7 @@ public class CheckstyleAuditListener implements AuditListener {
     }
 
     @Override
-    public void addException(AuditEvent auditEvent, Throwable throwable) {
+    public void addException(final AuditEvent auditEvent, final Throwable throwable) {
     }
 
     @Override

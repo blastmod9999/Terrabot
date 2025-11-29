@@ -1,11 +1,10 @@
 package entities.soil;
+
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import entities.Entities;
-import entities.air.Air;
-import main.*;
 
 
 @JsonTypeInfo(
@@ -22,75 +21,111 @@ import main.*;
         @JsonSubTypes.Type(value = GrasslandSoil.class, name = "GrasslandSoil")
 })
 public abstract class Soil extends Entities {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     private double nitrogen;
     private double waterRetention;
     private double soilpH;
     private double organicMatter;
     private String soilQuality;
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
-    //Facem deepcopy nu Shallow
-    // + try catch generat de IDE
-    // Source - https://stackoverflow.com/questions/49903859/deep-copy-using-jackson-string-or-jsonnode
-// Posted by Rad, modified by community. See post 'Timeline' for change history
-// Retrieved 2025-11-27, License - CC BY-SA 3.0
-
-    //MyPojo myPojo = new MyPojo();
-    //ObjectMapper mapper = new ObjectMapper();
-    //MyPojo newPojo = mapper.treeToValue(mapper.valueToTree(myPojo), MyPojo.class);
-
+    /**
+     * Javadoc for method copy.
+     * Se face deepcopy , referinta in AIR
+     */
     public Soil copy() {
         try {
             return MAPPER.treeToValue(MAPPER.valueToTree(this), Soil.class);
-        } catch (JsonProcessingException e) {
+        } catch (final JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Javadoc for method getNitrogen.
+     */
     public double getNitrogen() {
         return nitrogen;
     }
 
-    public void setNitrogen(double nitrogen) {
+    /**
+     * Javadoc for method setNitrogen.
+     */
+    public void setNitrogen(final double nitrogen) {
         this.nitrogen = nitrogen;
     }
 
+    /**
+     * Javadoc for method getWaterRetention.
+     */
     public double getWaterRetention() {
         return waterRetention;
     }
 
-    public void setWaterRetention(double waterRetention) {
+    /**
+     * Javadoc for method setWaterRetention.
+     */
+    public void setWaterRetention(final double waterRetention) {
         this.waterRetention = waterRetention;
     }
 
+    /**
+     * Javadoc for method getSoilpH.
+     */
     public double getSoilpH() {
         return soilpH;
     }
 
-    public void setSoilpH(double soilpH) {
+    /**
+     * Javadoc for method setSoilpH.
+     */
+    public void setSoilpH(final double soilpH) {
         this.soilpH = soilpH;
     }
 
+    /**
+     * Javadoc for method getOrganicMatter.
+     */
     public double getOrganicMatter() {
         return organicMatter;
     }
 
-    public void setOrganicMatter(double organicMatter) {
+    /**
+     * Javadoc for method setOrganicMatter.
+     */
+    public void setOrganicMatter(final double organicMatter) {
         this.organicMatter = organicMatter;
     }
 
-    public void setSoilQualityScore() {}
-
-    public double getSoilQualityScore() {return 0;}
-
-    public void setSoilQuality(String soilQuality) {
-        this.soilQuality = soilQuality;
+    /**
+     * Javadoc for method setSoilQualityScore.
+     */
+    public void setSoilQualityScore() {
     }
+
+    /**
+     * Javadoc for method getSoilQualityScore.
+     */
+    public double getSoilQualityScore() {
+        return 0;
+    }
+
+    /**
+     * Javadoc for method getSoilQuality.
+     */
     public String getSoilQuality() {
         return soilQuality;
     }
 
+    /**
+     * Javadoc for method setSoilQuality.
+     */
+    public void setSoilQuality(final String soilQuality) {
+        this.soilQuality = soilQuality;
+    }
+
+    /**
+     * Javadoc for method posibilityToGetStuck.
+     */
     public double posibilityToGetStuck() {
         return 0;
     }

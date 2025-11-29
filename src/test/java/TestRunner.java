@@ -82,9 +82,9 @@ public class TestRunner {
     ) throws IOException {
         Main.action(inputPath, outputPath);
 
-        JsonNode inputJson = objectMapper.readTree(new File(inputPath));
-        JsonNode outputJson = objectMapper.readTree(new File(outputPath));
-        JsonNode refJson = objectMapper.readTree(new File(refPath));
+        final JsonNode inputJson = objectMapper.readTree(new File(inputPath));
+        final JsonNode outputJson = objectMapper.readTree(new File(outputPath));
+        final JsonNode refJson = objectMapper.readTree(new File(refPath));
 
         try {
             assertThatJson(outputJson).isEqualTo(refJson);
@@ -93,7 +93,7 @@ public class TestRunner {
                 PASSED,
                 points
             ));
-        } catch (AssertionError e) {
+        } catch (final AssertionError e) {
             devmindResults.add(new DevmindErrorResult(
                     testName,
                     points,
@@ -106,24 +106,24 @@ public class TestRunner {
 
     @Test
     public void testCheckstyle() throws CheckstyleException, IOException {
-        File configFile = new File("src/test/resources/checkstyle/checkstyle.xml");
-        Configuration config = ConfigurationLoader.loadConfiguration(
+        final File configFile = new File("src/test/resources/checkstyle/checkstyle.xml");
+        final Configuration config = ConfigurationLoader.loadConfiguration(
                 new InputSource(configFile.getAbsolutePath()),
                 new PropertiesExpander(System.getProperties()),
                 ConfigurationLoader.IgnoredModulesOptions.EXECUTE
         );
 
-        CheckstyleAuditListener checkstyleAuditListener = new CheckstyleAuditListener();
-        Checker checker = new Checker();
+        final CheckstyleAuditListener checkstyleAuditListener = new CheckstyleAuditListener();
+        final Checker checker = new Checker();
         checker.setModuleClassLoader(CheckerConstants.class.getClassLoader());
         checker.addListener(checkstyleAuditListener);
         checker.configure(config);
 
-        List<File> files = SourceFileCollector.getJavaSourceFiles("src/main/java");
-        int errorCount = checker.process(files);
+        final List<File> files = SourceFileCollector.getJavaSourceFiles("src/main/java");
+        final int errorCount = checker.process(files);
         checker.destroy();
 
-        String checkStyleErrors = checkstyleAuditListener.toString();
+        final String checkStyleErrors = checkstyleAuditListener.toString();
         try {
             assertThat(errorCount).isLessThanOrEqualTo(CheckerConstants.MAXIMUM_ERROR_CHECKSTYLE);
             devmindResults.add(new DevmindResult(
@@ -134,7 +134,7 @@ public class TestRunner {
             System.out.println(checkStyleErrors);
             TestCaseWatcher.totalPoints += CheckerConstants.CHECKSTYLE_POINTS;
         }
-        catch (AssertionError e) {
+        catch (final AssertionError e) {
             devmindResults.add(new DevmindErrorResult(
                     "checkstyle",
                     CheckerConstants.CHECKSTYLE_POINTS,
@@ -144,24 +144,24 @@ public class TestRunner {
         }
     }
 
-    private boolean hasNonDeveloperAuthor(RevCommit commit) {
-        List<String> exceptedAuthors = List.of(
+    private boolean hasNonDeveloperAuthor(final RevCommit commit) {
+        final List<String> exceptedAuthors = List.of(
             "david.capragiu@gmail.com",
             "alina.tudorache872@gmail.com",
             "63539529+Dievaid@users.noreply.github.com",
             "69516563+alina-t-872@users.noreply.github.com"
         );
 
-        String userEmail = commit.getAuthorIdent().getEmailAddress();
+        final String userEmail = commit.getAuthorIdent().getEmailAddress();
         return !exceptedAuthors.contains(userEmail);
     }
 
     @Test
     public void testGitCommits() throws GitAPIException, IOException {
-        File repoDirectory = new File("./");
+        final File repoDirectory = new File("./");
 
-        try (Git git = Git.open(repoDirectory)) {
-            List<RevCommit> commits = StreamSupport.stream(git.log().call().spliterator(), false)
+        try (final Git git = Git.open(repoDirectory)) {
+            final List<RevCommit> commits = StreamSupport.stream(git.log().call().spliterator(), false)
                     .filter(this::hasNonDeveloperAuthor)
                     .sorted(Comparator.comparing(RevCommit::getCommitTime))
                     .toList();
@@ -176,7 +176,7 @@ public class TestRunner {
                     CheckerConstants.GIT_POINTS
             ));
             TestCaseWatcher.totalPoints += CheckerConstants.GIT_POINTS;
-        } catch (IOException | AssertionError | GitAPIException e) {
+        } catch (final IOException | AssertionError | GitAPIException e) {
             devmindResults.add(new DevmindErrorResult(
                     "git",
                     CheckerConstants.GIT_POINTS,
@@ -188,7 +188,7 @@ public class TestRunner {
 
     @AfterAll
     public static void afterAll() throws JsonProcessingException {
-        boolean isDevmindEnvironment = Optional.ofNullable(System.getProperty("environment"))
+        final boolean isDevmindEnvironment = Optional.ofNullable(System.getProperty("environment"))
                 .map(value -> value.equals("devmind"))
                 .orElse(false);
 
@@ -203,7 +203,7 @@ public class TestRunner {
         System.out.println(TestCaseWatcher.stringBuilder);
         System.out.println("Total: " + TestCaseWatcher.totalPoints + "/100");
 
-        boolean allPassed = devmindResults.stream()
+        final boolean allPassed = devmindResults.stream()
                 .allMatch(result -> PASSED.equals(result.getStatus()));
 
         if (allPassed) {

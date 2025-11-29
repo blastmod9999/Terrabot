@@ -1,21 +1,33 @@
 package entities;
 
 public class Sections {
-    private int x,y;
+    private int x, y;
 
+    /**
+     * Javadoc for method getX.
+     */
     public int getX() {
         return x;
     }
 
-    public void setX(int x) {
+    /**
+     * Javadoc for method setX.
+     */
+    public void setX(final int x) {
         this.x = x;
     }
 
+    /**
+     * Javadoc for method getY.
+     */
     public int getY() {
         return y;
     }
 
-    public void setY(int y) {
+    /**
+     * Javadoc for method setY.
+     */
+    public void setY(final int y) {
         this.y = y;
     }
 }

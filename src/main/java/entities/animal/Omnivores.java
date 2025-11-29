@@ -1,11 +1,5 @@
 package entities.animal;
 
-import entities.plant.Plants;
-import entities.water.Water;
-import map.InitializeMap;
-import map.MapBox;
-
-public class Omnivores extends Animals{
-
+public final class Omnivores extends Animals {
 
 }

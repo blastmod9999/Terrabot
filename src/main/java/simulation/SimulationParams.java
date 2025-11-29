@@ -8,26 +8,45 @@ public class SimulationParams {
     private int energyPoints;
     private TerritorySectionParams territorySectionParams;
 
+    /**
+     * Javadoc for method getTerritorySectionParams.
+     */
     public TerritorySectionParams getTerritorySectionParams() {
         return territorySectionParams;
     }
 
-    public void setTerritorySectionParams(TerritorySectionParams territorySectionParams) {
+    /**
+     * Javadoc for method setTerritorySectionParams.
+     */
+    public void setTerritorySectionParams(final TerritorySectionParams territorySectionParams) {
         this.territorySectionParams = territorySectionParams;
     }
 
+    /**
+     * Javadoc for method getTerritoryDim.
+     */
     public String getTerritoryDim() {
         return territoryDim;
     }
 
-    public void setTerritoryDim(String territoryDim) {
+    /**
+     * Javadoc for method setTerritoryDim.
+     */
+    public void setTerritoryDim(final String territoryDim) {
         this.territoryDim = territoryDim;
     }
 
+    /**
+     * Javadoc for method getEnergyPoints.
+     */
     public int getEnergyPoints() {
         return energyPoints;
     }
-    public void setEnergyPoints(int energyPoints) {
+
+    /**
+     * Javadoc for method setEnergyPoints.
+     */
+    public void setEnergyPoints(final int energyPoints) {
         this.energyPoints = energyPoints;
     }
 }

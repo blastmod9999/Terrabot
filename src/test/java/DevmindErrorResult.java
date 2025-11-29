@@ -4,7 +4,7 @@ public class DevmindErrorResult extends DevmindResult {
     @JsonProperty
     private final String error;
 
-    public DevmindErrorResult(String test, int testScore, String error) {
+    public DevmindErrorResult(final String test, final int testScore, final String error) {
         super(test, "ERROR", testScore);
         this.error = error;
     }

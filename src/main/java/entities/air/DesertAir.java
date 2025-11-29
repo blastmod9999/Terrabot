@@ -1,32 +1,62 @@
 package entities.air;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import simulation.Commands;
+import utils.MagicNumbers;
 
-public class DesertAir extends Air {
+import static utils.MagicNumbers.ONE_HUNDRED_INT;
+import static utils.MagicNumbers.ONE_HUNDRED_DOUBLE;
+import static utils.MagicNumbers.MAX_DESERT;
+import static utils.MagicNumbers.THIRTY;
+
+
+public final class DesertAir extends Air {
     //@JsonIgnore
     private double dustParticles; //desert
     private double airQualityScore;
     private boolean desertStorm;
 
+/**
+ * Javadoc for method isDesertStorm.
+ */
+    /**
+     * Javadoc for method isDesertStorm.
+     */
     public boolean isDesertStorm() {
         return desertStorm;
     }
 
-    public void setDesertStorm(boolean desertStorm) {
+/**
+ * Javadoc for method setDesertStorm.
+ */
+    /**
+     * Javadoc for method setDesertStorm.
+     */
+    public void setDesertStorm(final boolean desertStorm) {
         this.desertStorm = desertStorm;
     }
 
     @Override
+/**
+ * Javadoc for method resetWeather.
+ */
+/**
+ * Javadoc for method resetWeather.
+ */
     public void resetWeather() {
         this.desertStorm = false;
         setAirQualityScore();
     }
 
+/**
+ * Javadoc for method ApplyWeatherConditions.
+ */
+/**
+ * Javadoc for method ApplyWeatherConditions.
+ */
     @Override
-    public boolean ApplyWeatherConditions(Commands command) {
-        if(command.getType().equals("desertStorm")) {
-            IO.println("AAAAAAAAAAAAAAAAAAAAAAAAAM INTRAT AICI ------------------------------- " + command.isDesertStorm());
+    public boolean applyWeatherConditions(final Commands command) {
+        if (command.getType().equals("desertStorm")) {
+            //IO.println("AAAAAAAAAAAM INTRAT AICI" + command.isDesertStorm());
             this.desertStorm = command.isDesertStorm();
             setAirQualityScore();
             return true;
@@ -35,32 +65,48 @@ public class DesertAir extends Air {
         return false;
     }
 
+
+/**
+ * Javadoc for method setAirQualityScore.
+ */
     @Override
     public void setAirQualityScore() {
 
         //IO.println(super.getOxygenLevel()+ "  " + super.getHumidity() +"\n" );
-        airQualityScore = 	(getOxygenLevel()*2) - (dustParticles*0.2) - (getTemperature()*0.3);
-        double normalizeScore = Math.max(0, Math.min(100, airQualityScore));
-        airQualityScore = Math.round(normalizeScore * 100.0) / 100.0;
+        airQualityScore = (getOxygenLevel() * 2) - (dustParticles * MagicNumbers.POINT_TWO)
+                - (getTemperature() * MagicNumbers.POINT_THREE);
+        final double normalizeScore = Math.max(0, Math.min(ONE_HUNDRED_INT, airQualityScore));
+        airQualityScore = Math.round(normalizeScore * ONE_HUNDRED_DOUBLE) / ONE_HUNDRED_DOUBLE;
 
-        if(this.desertStorm) {
-            airQualityScore -= 30;
+        if (this.desertStorm) {
+            airQualityScore -= THIRTY;
         }
 
         setAirQuality(airQualityScore);
 
         //toxicitate:
-        setAirToxicity(airQualityScore,65);
+        setAirToxicity(airQualityScore, MAX_DESERT);
     }
+
+/**
+ * Javadoc for method getAirQualityScore.
+ */
     @Override
     public double getAirQualityScore() {
         return airQualityScore;
     }
+
+    /**
+     * Javadoc for method getDustParticles.
+     */
     public double getDustParticles() {
         return dustParticles;
     }
 
-    public void setDustParticles(double dustParticles) {
+    /**
+     * Javadoc for method setDustParticles.
+     */
+    public void setDustParticles(final double dustParticles) {
         this.dustParticles = dustParticles;
     }
 }

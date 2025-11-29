@@ -14,7 +14,7 @@ public class DevmindResult {
     @JsonProperty("test_score")
     private final int testScore;
 
-    public DevmindResult(String test, String status, int testScore) {
+    public DevmindResult(final String test, final String status, final int testScore) {
         this.test = test;
         this.status = status;
         this.testScore = testScore;
@@ -22,10 +22,10 @@ public class DevmindResult {
 
     @Override
     public String toString() {
-        ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
+        } catch (final JsonProcessingException e) {
             return e.getMessage();
         }
     }

@@ -1,19 +1,35 @@
 package entities.soil;
 
-public class SwampSoil extends Soil {
+import utils.MagicNumbers;
+
+import static utils.MagicNumbers.ONE_POINT_ONE;
+import static utils.MagicNumbers.TWO_POINT_TWO;
+import static utils.MagicNumbers.ONE_HUNDRED_INT;
+import static utils.MagicNumbers.ONE_HUNDRED_DOUBLE;
+import static utils.MagicNumbers.TEN;
+import static utils.MagicNumbers.FIVE;
+
+
+public final class SwampSoil extends Soil {
     private double waterLogging;  //SwampSoil
     private double soilQualityScore;
 
     @Override
+/**
+ * Javadoc for method setSoilQualityScore.
+ */
     public void setSoilQualityScore() {
-        soilQualityScore = (getNitrogen() * 1.1) + (getOrganicMatter() * 2.2) - (getWaterLogging() * 5);
+        soilQualityScore =
+                (getNitrogen() * ONE_POINT_ONE) + (getOrganicMatter() * TWO_POINT_TWO)
+                        - (getWaterLogging() * FIVE);
 
-        double normalizeScore = Math.max(0, Math.min(100, soilQualityScore));
-        double finalResult = Math.round(normalizeScore * 100.0) / 100.0;
+        final double normalizeScore = Math.max(0, Math.min(ONE_HUNDRED_INT, soilQualityScore));
+        final double finalResult =
+                Math.round(normalizeScore * ONE_HUNDRED_DOUBLE) / ONE_HUNDRED_DOUBLE;
         soilQualityScore = finalResult;
-        if(soilQualityScore >= 70)
+        if (soilQualityScore >= MagicNumbers.GOOD) {
             setSoilQuality("good");
-        else if (soilQualityScore >= 40) {
+        } else if (soilQualityScore >= MagicNumbers.MODERATE) {
             setSoilQuality("moderate");
         } else {
             setSoilQuality("poor");
@@ -25,19 +41,32 @@ public class SwampSoil extends Soil {
 //    }
 
     @Override
-    public double posibilityToGetStuck(){
-        return 	waterLogging * 10;
+/**
+ * Javadoc for method posibilityToGetStuck.
+ */
+    public double posibilityToGetStuck() {
+        return waterLogging * TEN;
     }
 
     @Override
-    public double getSoilQualityScore()
-    {
+/**
+ * Javadoc for method getSoilQualityScore.
+ */
+    public double getSoilQualityScore() {
         return soilQualityScore;
     }
+
+    /**
+     * Javadoc for method getWaterLogging.
+     */
     public double getWaterLogging() {
         return waterLogging;
     }
-    public void setWaterLogging(double waterLogging) {
+
+    /**
+     * Javadoc for method setWaterLogging.
+     */
+    public void setWaterLogging(final double waterLogging) {
         this.waterLogging = waterLogging;
     }
 }

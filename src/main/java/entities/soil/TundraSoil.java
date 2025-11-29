@@ -1,19 +1,31 @@
 package entities.soil;
 
-public class TundraSoil extends Soil {
+import utils.MagicNumbers;
+
+import static utils.MagicNumbers.ONE_HUNDRED_INT;
+import static utils.MagicNumbers.ONE_POINT_FIVE;
+import static utils.MagicNumbers.ONE_HUNDRED_DOUBLE;
+import static utils.MagicNumbers.FIFTY;
+
+public final class TundraSoil extends Soil {
     private double permafrostDepth; //TundraSoil
     private double soilQualityScore;
 
     @Override
+/**
+ * Javadoc for method setSoilQualityScore.
+ */
     public void setSoilQualityScore() {
-        soilQualityScore = 		(getNitrogen() * 0.7) + (getOrganicMatter() * 0.5) - (permafrostDepth * 1.5);
+        soilQualityScore = (getNitrogen() * MagicNumbers.POINT_SEVEN) + (getOrganicMatter()
+                * MagicNumbers.POINT_FIVE) - (permafrostDepth * ONE_POINT_FIVE);
 
-        double normalizeScore = Math.max(0, Math.min(100, soilQualityScore));
-        double finalResult = Math.round(normalizeScore * 100.0) / 100.0;
+        final double normalizeScore = Math.max(0, Math.min(ONE_HUNDRED_INT, soilQualityScore));
+        final double finalResult =
+                Math.round(normalizeScore * ONE_HUNDRED_DOUBLE) / ONE_HUNDRED_DOUBLE;
         soilQualityScore = finalResult;
-        if(soilQualityScore >= 70)
+        if (soilQualityScore >= MagicNumbers.GOOD) {
             setSoilQuality("good");
-        else if (soilQualityScore >= 40) {
+        } else if (soilQualityScore >= MagicNumbers.MODERATE) {
             setSoilQuality("moderate");
         } else {
             setSoilQuality("poor");
@@ -21,15 +33,24 @@ public class TundraSoil extends Soil {
     }
 
     @Override
-    public double posibilityToGetStuck(){
-        return  ((50 - permafrostDepth) / 50) * 100;
+/**
+ * Javadoc for method posibilityToGetStuck.
+ */
+    public double posibilityToGetStuck() {
+        return ((FIFTY - permafrostDepth) / FIFTY) * ONE_HUNDRED_INT;
     }
 
+    /**
+     * Javadoc for method getPermafrostDepth.
+     */
     public double getPermafrostDepth() {
         return permafrostDepth;
     }
 
-    public void setPermafrostDepth(double permafrostDepth) {
+    /**
+     * Javadoc for method setPermafrostDepth.
+     */
+    public void setPermafrostDepth(final double permafrostDepth) {
         this.permafrostDepth = permafrostDepth;
     }
 }

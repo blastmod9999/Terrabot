@@ -1,19 +1,34 @@
 package entities.soil;
 
-public class ForestSoil extends Soil {
+import utils.MagicNumbers;
+
+import static utils.MagicNumbers.ONE_HUNDRED_INT;
+import static utils.MagicNumbers.ONE_POINT_TWO;
+import static utils.MagicNumbers.ONE_POINT_FIVE;
+import static utils.MagicNumbers.ONE_HUNDRED_DOUBLE;
+import static utils.MagicNumbers.EIGHTY;
+
+public final class ForestSoil extends Soil {
     private double leafLitter;  //ForestSoil
     private double soilQualityScore;
 
     @Override
+/**
+ * Javadoc for method setSoilQualityScore.
+ */
     public void setSoilQualityScore() {
-        soilQualityScore = (getNitrogen() * 1.2) + (getOrganicMatter() * 2) + (getWaterRetention() * 1.5) + (leafLitter * 0.3);
+        soilQualityScore =
+                (getNitrogen() * ONE_POINT_TWO) + (getOrganicMatter() * 2)
+                        + (getWaterRetention() * ONE_POINT_FIVE)
+                        + (leafLitter * MagicNumbers.POINT_THREE);
 
-        double normalizeScore = Math.max(0, Math.min(100, soilQualityScore));
-        double finalResult = Math.round(normalizeScore * 100.0) / 100.0;
+        final double normalizeScore = Math.max(0, Math.min(ONE_HUNDRED_INT, soilQualityScore));
+        final double finalResult =
+                Math.round(normalizeScore * ONE_HUNDRED_DOUBLE) / ONE_HUNDRED_DOUBLE;
         soilQualityScore = finalResult;
-        if(soilQualityScore >= 70)
+        if (soilQualityScore >= MagicNumbers.GOOD) {
             setSoilQuality("good");
-        else if (soilQualityScore >= 40) {
+        } else if (soilQualityScore >= MagicNumbers.MODERATE) {
             setSoilQuality("moderate");
         } else {
             setSoilQuality("poor");
@@ -25,20 +40,33 @@ public class ForestSoil extends Soil {
 //    }
 
     @Override
-    public double posibilityToGetStuck(){
-        return ((getWaterRetention() * 0.6 + leafLitter * 0.4) / 80) * 100;
+/**
+ * Javadoc for method posibilityToGetStuck.
+ */
+    public double posibilityToGetStuck() {
+        return ((getWaterRetention() * MagicNumbers.POINT_SIX
+                + leafLitter * MagicNumbers.POINT_FOUR) / EIGHTY) * ONE_HUNDRED_INT;
     }
 
     @Override
-    public double getSoilQualityScore()
-    {
+/**
+ * Javadoc for method getSoilQualityScore.
+ */
+    public double getSoilQualityScore() {
         return soilQualityScore;
     }
+
+    /**
+     * Javadoc for method getLeafLitter.
+     */
     public double getLeafLitter() {
         return leafLitter;
     }
 
-    public void setLeafLitter(double leafLitter) {
+    /**
+     * Javadoc for method setLeafLitter.
+     */
+    public void setLeafLitter(final double leafLitter) {
         this.leafLitter = leafLitter;
     }
 }
